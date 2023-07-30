@@ -1,113 +1,323 @@
-import Image from 'next/image'
+"use client";
+
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { BiPlusCircle } from "react-icons/bi";
+
+import Modal from "./components/Modal";
 
 export default function Home() {
+  // all todos data from json
+  const [todosData, setTodosData] = useState({});
+
+  const [showModal, setShowModal] = useState(false);
+
+  // single todo to show on lhs
+  const [todo, setTodo] = useState([]);
+
+  // current date
+  const [currentDate, setCurrentDate] = useState({
+    day: "",
+    month: "",
+    year: "",
+  });
+
+  // no of days in month
+  const [daysInMonth, setDaysInMonth] = useState(null);
+
+  // month selected
+  const [selectedMonth, setSelectedMonth] = useState("");
+
+  const [selectedDay, setSelectedDay] = useState("");
+
+  function range(no) {
+    let arr = [];
+    for (let i = 1; i <= no; i++) {
+      arr.push(i);
+    }
+    return arr;
+  }
+
+  function fetchCurrentDate() {
+    // Get the current date
+    const currentDate = new Date();
+
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    // Get the current month (0 - January, 1 - February, ..., 11 - December)
+    let currentMonth = months[currentDate.getMonth()].toLowerCase();
+    const currentDay = currentDate.getDate();
+    let currentYear = currentDate.getFullYear();
+
+    // Get the number of days in the current month
+    let daysInCurrentMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0
+    ).getDate();
+
+    setDaysInMonth(daysInCurrentMonth);
+
+    setSelectedMonth(currentMonth);
+
+    setSelectedDay(currentDay);
+    setCurrentDate({
+      day: currentDay,
+      month: currentMonth,
+      year: currentYear,
+    });
+  }
+
+  const handleSelectChange = (event) => {
+    setSelectedMonth(event.target.value);
+
+    setDaysInMonth(
+      Object.keys(
+        todosData?.[currentDate.year]?.[event.target.value.toLowerCase()]
+      )?.length
+    );
+
+    // console.log(event.target.value);
+
+    // console.log('length', (Object.keys(todosData[currentDate.year][event.target.value.toLowerCase()]).length))
+  };
+
+  const fetchTodoData = async () => {
+    try {
+      let res = await fetch("/api/get_json_data");
+      let respData = await res.json();
+
+      if (respData.success) {
+        setTodosData(respData.data);
+
+        console.log("current", currentDate);
+
+        setTodo(
+          respData.data?.[currentDate.year.toString()]?.[currentDate.month]?.[
+            currentDate.day
+          ]
+        );
+      } else {
+        console.log("ERROR: something went wrong");
+
+        return;
+      }
+
+      console.log("respData", respData);
+    } catch (error) {
+      console.log("ERROR", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCurrentDate();
+    // fetchTodoData();
+  }, []);
+
+  useEffect(() => {
+    // This useEffect monitors changes to currentDate and calls fetchTodoData
+    fetchTodoData();
+  }, [currentDate]); // Whenever currentDate changes, this useEffect will be triggered
+
+  function addTodoInSelectedDate() {
+    setShowModal(true);
+  }
+
+  function handleDateClick(ele) {
+    setSelectedDay(ele);
+
+    let toDo = todosData[currentDate.year][selectedMonth][ele];
+
+    if (toDo) {
+      setTodo(toDo);
+    } else {
+      setTodo([]);
+    }
+  }
+
+  async function addTodo(todo) {
+    try {
+      let fetchData = await fetch("/api/get_json_data");
+
+      let { data } = await fetchData.json();
+
+      console.log(
+        "fetch data res checking",
+        data[currentDate.year][selectedMonth][selectedDay]
+      );
+
+      if (!data[currentDate.year][selectedMonth][selectedDay]) {
+        data[currentDate.year][selectedMonth][selectedDay] = [
+          {
+            name: todo,
+            status: "not done",
+          },
+        ];
+      } else {
+        console.log("history");
+        data[currentDate.year][selectedMonth][selectedDay].push({
+          name: todo,
+          status: "not done",
+        });
+      }
+
+      let updatedData = data;
+
+      let res = await fetch("/api/update_json_data", {
+        method: "POST",
+        headers: {
+          Content_Type: "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      let jsonRes = await res.json();
+
+      console.log("jsonRes ????", jsonRes);
+
+      if (jsonRes.success) {
+        setTodo(data[currentDate.year][selectedMonth][selectedDay]);
+      }
+
+      setShowModal(false);
+      // console.log('response  ????',await res.json());
+    } catch (error) {
+      console.log("ERROR ????", error);
+    }
+  }
+
+  const deleteTodo = async (todo) => {
+    try {
+      let fetchData = await fetch("/api/get_json_data");
+
+      let { data } = await fetchData.json();
+
+      data[currentDate.year][selectedMonth][selectedDay] = data[
+        currentDate.year
+      ][selectedMonth][selectedDay].filter((t) => t.name !== todo.name);
+
+      const res = await fetch("api/update_json_data", {
+        method: "POST",
+        headers: {
+          Content_Type: "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      let jsonRes = await res.json();
+
+      if (jsonRes.success) {
+        setTodo(data[currentDate.year][selectedMonth][selectedDay]);
+      }
+    } catch (error) {
+      console.log("ERROR", error);
+    }
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="main flex">
+      <div className="left_bar w-1/4 min-h-screen">
+        {showModal ? (
+          <div className="absolute left-1/3">
+            <Modal setShowModal={setShowModal} addTodo={addTodo} />
+          </div>
+        ) : (
+          ""
+        )}
+
+        <div className="dropdown text-black pt-20 flex flex-col justify-center items-center">
+          <div className="pb-1 text-sm">Select month</div>
+          <select
+            name="year"
+            id="year"
+            value={selectedMonth}
+            onChange={handleSelectChange}
+            className="w-32 p-1"
           >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+            <option value="january">january</option>
+            <option value="february">february</option>
+            <option value="march">march</option>
+            <option value="april">april</option>
+            <option value="may">may</option>
+            <option value="june">june</option>
+            <option value="july">july</option>
+            <option value="august">august</option>
+            <option value="september">september</option>
+            <option value="october">october</option>
+            <option value="november">november</option>
+            <option value="december">december</option>
+          </select>
+        </div>
+        <div className="todos ">
+          <div className="text-black pt-20 pl-9 font-bold">
+            Todos {`(${selectedDay} ${selectedMonth} ${currentDate.year})`}
+            <button
+              className="ml-1 bg-blue-700 rounded-lg p-1 text-xs border border-purple-400 text-white"
+              onClick={addTodoInSelectedDate}
+            >
+              Add
+            </button>
+          </div>
+
+          {todo?.length ? (
+            <div className="text-black">
+              <ul>
+                {todo.map((t) => {
+                  return (
+                    <li className="px-9 my-3" key={t.name}>
+                      {t.name}
+                      <button
+                        onClick={() => deleteTodo(t)}
+                        className="ml-1 bg-red-600 rounded-lg p-1 text-xs border border-purple-400 text-white"
+                      >
+                        Delete
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ) : (
+            <div className="text-black px-9 my-3">Empty!!!!</div>
+          )}
         </div>
       </div>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+      <div className="right_bar w-full">
+        <div className="h-24 flex justify-center items-center text-xl">
+          <h1>Calendar</h1>
+        </div>
+
+        <div className="flex content-start flex-wrap">
+          {range(daysInMonth).map((ele, index) => {
+            return (
+              <div
+                key={index}
+                className={
+                  ele === currentDate.day
+                    ? "bg-orange-500 h-16 w-1/4 border flex justify-center items-center cursor-pointer"
+                    : "h-16 w-1/4 border flex justify-center items-center cursor-pointer"
+                }
+                onClick={() => handleDateClick(ele)}
+              >
+                {ele}
+              </div>
+            );
+          })}
+        </div>
       </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    </div>
+  );
 }

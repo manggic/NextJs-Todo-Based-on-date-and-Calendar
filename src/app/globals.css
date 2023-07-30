@@ -25,3 +25,21 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+
+
+
+ ul li {
+  list-style-type: none;
+  font-size: 1em;
+}
+
+.left_bar{
+  background-color:#c1d8f0;
+}
+
+
+
+
+
+
