@@ -200,7 +200,7 @@
     },
     "july": {
       "1": null,
-      "2": null,
+      "2": [],
       "3": null,
       "4": null,
       "5": null,
@@ -243,16 +243,7 @@
       ],
       "29": null,
       "30": [],
-      "31": [
-        {
-          "name": "breakfast",
-          "status": "not done"
-        },
-        {
-          "name": "coding",
-          "status": "not done"
-        }
-      ]
+      "31": []
     },
     "august": {
       "1": null,

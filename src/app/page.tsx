@@ -89,6 +89,10 @@ export default function Home() {
       )?.length
     );
 
+    setSelectedDay(null);
+
+    setTodo(todosData?.[currentDate.year]?.[event.target.value]);
+
     // console.log(event.target.value);
 
     // console.log('length', (Object.keys(todosData[currentDate.year][event.target.value.toLowerCase()]).length))
@@ -226,6 +230,47 @@ export default function Home() {
     }
   };
 
+  async function updateTodoStatus(todo) {
+    try {
+      let fetchData = await fetch("/api/get_json_data");
+
+      let { data } = await fetchData.json();
+
+      let finalObj = [];
+
+      console.log("todo ????", todo);
+
+      data[currentDate.year][selectedMonth][selectedDay].forEach((t) => {
+        if (todo.name === t.name) {
+          finalObj.push({
+            ...t,
+            status: t.status === "not done" ? "done" : "not done",
+          });
+        } else {
+          finalObj.push(t);
+        }
+      });
+
+      data[currentDate.year][selectedMonth][selectedDay] = finalObj;
+
+      let res = await fetch("api/update_json_data", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      let resJson = await res.json();
+
+      if (resJson.success) {
+        setTodo(finalObj);
+      }
+    } catch (error) {
+      console.log("ERROR", error);
+    }
+  }
+
   return (
     <div className="main flex">
       <div className="left_bar w-1/4 min-h-screen">
@@ -261,14 +306,19 @@ export default function Home() {
           </select>
         </div>
         <div className="todos ">
-          <div className="text-black pt-20 pl-9 font-bold">
-            Todos {`(${selectedDay} ${selectedMonth} ${currentDate.year})`}
-            <button
+          <div className="text-black pt-20 pl-7 font-bold">
+            Todos{" "}
+            {selectedDay
+              ? `(${selectedDay} ${selectedMonth} ${currentDate.year})`
+              : ""}
+
+              {selectedDay? <button
               className="ml-1 bg-blue-700 rounded-lg p-1 text-xs border border-purple-400 text-white"
               onClick={addTodoInSelectedDate}
             >
               Add
-            </button>
+            </button>:""}
+           
           </div>
 
           {todo?.length ? (
@@ -276,14 +326,29 @@ export default function Home() {
               <ul>
                 {todo.map((t) => {
                   return (
-                    <li className="px-9 my-3" key={t.name}>
-                      {t.name}
+                    <li className="px-7 my-3" key={t.name}>
+                      <span className="text-sm">{t.name}</span>
                       <button
                         onClick={() => deleteTodo(t)}
                         className="ml-1 bg-red-600 rounded-lg p-1 text-xs border border-purple-400 text-white"
                       >
                         Delete
                       </button>
+                      {selectedDay === currentDate.day ? (
+                        <button
+                          className="ml-1 bg-amber-400 rounded-lg p-1 text-xs border border-purple-400 text=black"
+                          onClick={() => updateTodoStatus(t)}
+                        >
+                          {t.status}
+                        </button>
+                      ) : (
+                        <span
+                          className="ml-1 bg-amber-400 rounded-lg p-1 text-xs border border-purple-400 text=black"
+                          // onClick={()=>updateTodoStatus(t)}
+                        >
+                          {t.status}
+                        </span>
+                      )}
                     </li>
                   );
                 })}
@@ -306,8 +371,10 @@ export default function Home() {
               <div
                 key={index}
                 className={
-                  ele === currentDate.day
+                  ele === currentDate.day && selectedMonth === currentDate.month
                     ? "bg-orange-500 h-16 w-1/4 border flex justify-center items-center cursor-pointer"
+                    : ele === selectedDay
+                    ? "h-16 w-1/4 border-amber-400 border flex justify-center items-center cursor-pointer"
                     : "h-16 w-1/4 border flex justify-center items-center cursor-pointer"
                 }
                 onClick={() => handleDateClick(ele)}
