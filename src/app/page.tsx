@@ -193,6 +193,8 @@ export default function Home() {
 
       if (jsonRes.success) {
         setTodo(data[currentDate.year][selectedMonth][selectedDay]);
+
+        setTodosData(data)
       }
 
       setShowModal(false);
@@ -311,14 +313,16 @@ export default function Home() {
             {selectedDay
               ? `(${selectedDay} ${selectedMonth} ${currentDate.year})`
               : ""}
-
-              {selectedDay? <button
-              className="ml-1 bg-blue-700 rounded-lg p-1 text-xs border border-purple-400 text-white"
-              onClick={addTodoInSelectedDate}
-            >
-              Add
-            </button>:""}
-           
+            {selectedDay ? (
+              <button
+                className="ml-1 bg-blue-700 rounded-lg p-1 text-xs border border-purple-400 text-white"
+                onClick={addTodoInSelectedDate}
+              >
+                Add
+              </button>
+            ) : (
+              ""
+            )}
           </div>
 
           {todo?.length ? (

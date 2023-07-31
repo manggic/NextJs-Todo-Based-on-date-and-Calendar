@@ -49,8 +49,8 @@
       "13": null,
       "14": [
         {
-          "name": "workout",
-          "status": "done"
+          "name": "buy rose",
+          "status": "not done"
         }
       ],
       "15": null,
@@ -243,7 +243,28 @@
       ],
       "29": null,
       "30": [],
-      "31": []
+      "31": [
+        {
+          "name": "exercise",
+          "status": "done"
+        },
+        {
+          "name": "bathing",
+          "status": "not done"
+        },
+        {
+          "name": "workship",
+          "status": "not done"
+        },
+        {
+          "name": "breakfast",
+          "status": "not done"
+        },
+        {
+          "name": "hair oil",
+          "status": "not done"
+        }
+      ]
     },
     "august": {
       "1": null,
