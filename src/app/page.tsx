@@ -6,6 +6,9 @@ import { BiPlusCircle } from "react-icons/bi";
 
 import Modal from "./components/Modal";
 
+import { MdDelete, MdOutlineEdit } from "react-icons/md";
+
+import { AiOutlinePlusCircle } from "react-icons/ai";
 export default function Home() {
   // all todos data from json
   const [todosData, setTodosData] = useState({});
@@ -22,6 +25,8 @@ export default function Home() {
     year: "",
   });
 
+  const [currentMonthData, setCurrentMonthData] = useState([]);
+
   // no of days in month
   const [daysInMonth, setDaysInMonth] = useState(null);
 
@@ -29,6 +34,8 @@ export default function Home() {
   const [selectedMonth, setSelectedMonth] = useState("");
 
   const [selectedDay, setSelectedDay] = useState("");
+
+  const [showTooltipOn, setShowTooltipOn] = useState("");
 
   function range(no) {
     let arr = [];
@@ -93,6 +100,8 @@ export default function Home() {
 
     setTodo(todosData?.[currentDate.year]?.[event.target.value]);
 
+    setCurrentMonthData(todosData?.[currentDate.year]?.[event.target.value]);
+
     // console.log(event.target.value);
 
     // console.log('length', (Object.keys(todosData[currentDate.year][event.target.value.toLowerCase()]).length))
@@ -106,13 +115,13 @@ export default function Home() {
       if (respData.success) {
         setTodosData(respData.data);
 
-        console.log("current", currentDate);
-
         setTodo(
           respData.data?.[currentDate.year.toString()]?.[currentDate.month]?.[
             currentDate.day
           ]
         );
+
+        setCurrentMonthData(respData.data[currentDate.year][currentDate.month]);
       } else {
         console.log("ERROR: something went wrong");
 
@@ -194,7 +203,7 @@ export default function Home() {
       if (jsonRes.success) {
         setTodo(data[currentDate.year][selectedMonth][selectedDay]);
 
-        setTodosData(data)
+        setTodosData(data);
       }
 
       setShowModal(false);
@@ -273,11 +282,15 @@ export default function Home() {
     }
   }
 
+  function handleHover(todo) {
+    setShowTooltipOn(todo.name);
+  }
+
   return (
     <div className="main flex">
       <div className="left_bar w-1/4 min-h-screen">
         {showModal ? (
-          <div className="absolute left-1/3">
+          <div className="absolute left-1/3 z-30">
             <Modal setShowModal={setShowModal} addTodo={addTodo} />
           </div>
         ) : (
@@ -285,7 +298,7 @@ export default function Home() {
         )}
 
         <div className="dropdown text-black pt-20 flex flex-col justify-center items-center">
-          <div className="pb-1 text-sm">Select month</div>
+          <div className="pb-1 text-sm text-white">Select month</div>
           <select
             name="year"
             id="year"
@@ -308,49 +321,98 @@ export default function Home() {
           </select>
         </div>
         <div className="todos ">
-          <div className="text-black pt-20 pl-7 font-bold">
-            Todos{" "}
-            {selectedDay
-              ? `(${selectedDay} ${selectedMonth} ${currentDate.year})`
-              : ""}
+          <div className="text-white pt-20 pl-7 font-bold flex items-center">
+            <div>
+              Todos{" "}
+              {selectedDay
+                ? `(${selectedDay} ${selectedMonth} ${currentDate.year})`
+                : ""}
+            </div>
+
             {selectedDay ? (
-              <button
-                className="ml-1 bg-blue-700 rounded-lg p-1 text-xs border border-purple-400 text-white"
+              <div
+                className="pl-3 cursor-pointer text-lg"
                 onClick={addTodoInSelectedDate}
               >
-                Add
-              </button>
+                <AiOutlinePlusCircle />
+              </div>
             ) : (
               ""
             )}
           </div>
 
           {todo?.length ? (
-            <div className="text-black">
+            <div className="text-white">
               <ul>
                 {todo.map((t) => {
                   return (
-                    <li className="px-7 my-3" key={t.name}>
-                      <span className="text-sm">{t.name}</span>
-                      <button
-                        onClick={() => deleteTodo(t)}
-                        className="ml-1 bg-red-600 rounded-lg p-1 text-xs border border-purple-400 text-white"
+                    <li
+                      className="px-7 my-3 flex items-center relative"
+                      key={t.name}
+                    >
+                      {/* {showTooltipOn == t.name ? (
+                        <span className="text-sm absolute border p-1 bottom-7 bg-black rounded w-48 text-center">
+                          {t.name}
+                        </span>
+                      ) : (
+                        ""
+                      )} */}
+
+                      {showTooltipOn == t.name ? (
+                        <span className="top">
+                          {t.name}
+                          <i></i>
+                        </span>
+                      ) : (
+                        ""
+                      )}
+
+                      <span
+                        onMouseEnter={() => handleHover(t)}
+                        onMouseLeave={() => setShowTooltipOn("")}
+                        className="text-sm"
                       >
-                        Delete
-                      </button>
-                      {selectedDay === currentDate.day ? (
+                        {t.name.length > 10
+                          ? t.name.slice(0, 10) + "..."
+                          : t.name}
+                      </span>
+
+                      {selectedDay == currentDate.day ? (
+                        <div className="ml-1 cursor-pointer">
+                          <MdOutlineEdit />
+                        </div>
+                      ) : (
+                        <div className="ml-1">
+                          <MdOutlineEdit />
+                        </div>
+                      )}
+
+                      {selectedDay == currentDate.day ? (
+                        <div
+                          className="ml-1 cursor-pointer"
+                          onClick={() => deleteTodo(t)}
+                        >
+                          <MdDelete />
+                        </div>
+                      ) : (
+                        <div className="ml-1">
+                          <MdDelete />
+                        </div>
+                      )}
+
+                      {selectedDay == currentDate.day ? (
                         <button
-                          className="ml-1 bg-amber-400 rounded-lg p-1 text-xs border border-purple-400 text=black"
+                          className="ml-1 bg-orange-200	 cursor-pointer rounded-lg p-1 text-xs border border-purple-400 text-black"
                           onClick={() => updateTodoStatus(t)}
                         >
-                          {t.status}
+                          {t.status === "not done" ? "Not Done" : "Done"}
                         </button>
                       ) : (
                         <span
-                          className="ml-1 bg-amber-400 rounded-lg p-1 text-xs border border-purple-400 text=black"
+                          className="ml-1 bg-orange-200	 p-1 rounded-lg text-xs border border-purple-400 text-black"
                           // onClick={()=>updateTodoStatus(t)}
                         >
-                          {t.status}
+                          {t.status === "not done" ? "Not Done" : "Done"}
                         </span>
                       )}
                     </li>
@@ -359,7 +421,7 @@ export default function Home() {
               </ul>
             </div>
           ) : (
-            <div className="text-black px-9 my-3">Empty!!!!</div>
+            <div className="text-white px-7 my-3">Empty!!!!</div>
           )}
         </div>
       </div>
@@ -367,23 +429,40 @@ export default function Home() {
       <div className="right_bar w-full">
         <div className="h-24 flex justify-center items-center text-xl">
           <h1>Calendar</h1>
+          <div className="absolute right-6 flex text-rose-200">
+            <div className="text-5xl pr-1 pt-1 leading-10">
+              {currentDate.day}
+            </div>
+            <div>
+              <div className="text-sm">{currentDate.month}</div>
+              <div>{currentDate.year}</div>
+            </div>
+          </div>
         </div>
 
         <div className="flex content-start flex-wrap">
-          {range(daysInMonth).map((ele, index) => {
+          {Object.entries(currentMonthData).map((ele, index) => {
+            const [key, value] = ele;
+
+            let classname =
+              "h-16 w-1/4 border flex justify-center items-center cursor-pointer";
+
+            if (key == currentDate.day && selectedMonth == currentDate.month) {
+              classname += " bg-blue-600";
+            } else if (key == selectedDay) {
+              classname += " bg-rose-400";
+            } else if (value?.length) {
+              classname += " text-pink-300	drop-shadow-2xl text-xl ";
+            } else {
+              classname += "";
+            }
             return (
               <div
                 key={index}
-                className={
-                  ele === currentDate.day && selectedMonth === currentDate.month
-                    ? "bg-orange-500 h-16 w-1/4 border flex justify-center items-center cursor-pointer"
-                    : ele === selectedDay
-                    ? "h-16 w-1/4 border-amber-400 border flex justify-center items-center cursor-pointer"
-                    : "h-16 w-1/4 border flex justify-center items-center cursor-pointer"
-                }
-                onClick={() => handleDateClick(ele)}
+                className={classname}
+                onClick={() => handleDateClick(key)}
               >
-                {ele}
+                {key}
               </div>
             );
           })}

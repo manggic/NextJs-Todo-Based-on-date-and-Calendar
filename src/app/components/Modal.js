@@ -6,7 +6,6 @@ const Modal = ({ setShowModal, addTodo }) => {
 
   function handleSubmit() {
     if (modalTodo) {
-
       addTodo(modalTodo);
     } else {
       setModalTodo(false);
@@ -14,7 +13,7 @@ const Modal = ({ setShowModal, addTodo }) => {
   }
 
   return (
-    <div className="h-52 bg-blue-300 py-20 px-16">
+    <div className="h-52 bg-gray-50 py-20 px-16">
       <div
         onClick={() => setShowModal(false)}
         className="absolute right-3 top-3 text-black text-lg cursor-pointer"
@@ -23,11 +22,11 @@ const Modal = ({ setShowModal, addTodo }) => {
       </div>
       <div className="text-black">Enter todo</div>
       <input
-        className="px-1 py-1 text-black"
+        className="px-1 py-1 text-black border border-black"
         type="text"
         name="todo"
         id="todo"
-        onChange={(e)=> setModalTodo(e.target.value)}
+        onChange={(e) => setModalTodo(e.target.value)}
       />
       <button
         onClick={() => handleSubmit()}

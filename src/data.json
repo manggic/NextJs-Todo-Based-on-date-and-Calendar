@@ -263,12 +263,42 @@
         {
           "name": "hair oil",
           "status": "not done"
+        },
+        {
+          "name": "meeting",
+          "status": "done"
         }
       ]
     },
     "august": {
-      "1": null,
-      "2": null,
+      "1": [
+        {
+          "name": "exercise",
+          "status": "done"
+        },
+        {
+          "name": "eye wash",
+          "status": "done"
+        },
+        {
+          "name": "bath",
+          "status": "done"
+        },
+        {
+          "name": "brinjraj",
+          "status": "not done"
+        },
+        {
+          "name": "comp closure topic",
+          "status": "not done"
+        }
+      ],
+      "2": [
+        {
+          "name": "lunch",
+          "status": "not done"
+        }
+      ],
       "3": null,
       "4": null,
       "5": null,
@@ -281,7 +311,12 @@
       "12": null,
       "13": null,
       "14": null,
-      "15": null,
+      "15": [
+        {
+          "name": "independence celeb",
+          "status": "not done"
+        }
+      ],
       "16": null,
       "17": null,
       "18": null,
