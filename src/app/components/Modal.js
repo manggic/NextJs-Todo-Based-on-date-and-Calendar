@@ -1,11 +1,16 @@
 import { useState } from "react";
 import { AiFillCloseCircle } from "react-icons/ai";
 
-const Modal = ({ setShowModal, addTodo }) => {
-  const [modalTodo, setModalTodo] = useState("");
+const Modal = ({ setShowModal, addTodo, editTodoInfo , editTodo}) => {
+  const [modalTodo, setModalTodo] = useState(editTodoInfo?.todo?.name || '');
+
 
   function handleSubmit() {
-    if (modalTodo) {
+  
+
+    if(editTodoInfo?.todo?.name){
+      editTodo(modalTodo)
+    }else if (modalTodo) {
       addTodo(modalTodo);
     } else {
       setModalTodo(false);
@@ -26,6 +31,7 @@ const Modal = ({ setShowModal, addTodo }) => {
         type="text"
         name="todo"
         id="todo"
+        value={modalTodo}
         onChange={(e) => setModalTodo(e.target.value)}
       />
       <button

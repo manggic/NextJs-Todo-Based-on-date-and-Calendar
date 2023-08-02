@@ -37,6 +37,11 @@ export default function Home() {
 
   const [showTooltipOn, setShowTooltipOn] = useState("");
 
+   const [editTodoInfo, setEditTodoInfo] = useState({
+         index:null,
+         todo:null
+   })
+
   function range(no) {
     let arr = [];
     for (let i = 1; i <= no; i++) {
@@ -345,6 +350,7 @@ export default function Home() {
 
   function handleHover(todo) {
     setShowTooltipOn(todo.name);
+
   }
 
   async function deleteAllTodo() {
@@ -412,12 +418,56 @@ export default function Home() {
     return false;
   }
 
+  function handleEdit(todo, indexOfTodo){
+
+    setEditTodoInfo({ ...editTodoInfo,  index:indexOfTodo, todo})
+      setShowModal(true)
+
+
+     
+
+  }
+
+
+  async function editTodo(todo){
+      
+           
+           let newTodosData = JSON.parse(JSON.stringify(todosData));
+
+           newTodosData[currentDate.year][selectedMonth][selectedDay][editTodoInfo.index]['name'] = todo
+
+          //  console.log('newTodosData ????',newTodosData);
+           
+          setTodosData(newTodosData)
+
+          setTodo(newTodosData[currentDate.year][selectedMonth][selectedDay])
+
+
+
+
+          const res = await fetch('api/update_json_data',{
+            method:'POST',
+            headers:{
+               'Content-Type':'application/json'
+            },
+            body: JSON.stringify(newTodosData)
+          })
+
+          const resJson = await res.json()
+
+
+          setShowModal(false)
+
+
+   }
+
+
   return (
     <div className="main flex">
       <div className="left_bar w-1/4 min-h-screen">
         {showModal ? (
           <div className="absolute left-1/3 z-30">
-            <Modal setShowModal={setShowModal} addTodo={addTodo} />
+            <Modal setShowModal={setShowModal} editTodoInfo={editTodoInfo}  editTodo={editTodo}  addTodo={addTodo} />
           </div>
         ) : (
           ""
@@ -491,7 +541,7 @@ export default function Home() {
           {todo?.length ? (
             <div className="text-white">
               <ul>
-                {todo.map((t) => {
+                {todo.map((t, index) => {
                   return (
                     <li
                       className="px-7 my-3 flex items-center relative"
@@ -521,7 +571,7 @@ export default function Home() {
                         selectedMonth,
                         currentDate.year,
                       ]) ? (
-                        <div className="ml-1 cursor-pointer">
+                        <div onClick={()=>handleEdit(t, index)}  className="ml-1 cursor-pointer">
                           <MdOutlineEdit />
                         </div>
                       ) : (

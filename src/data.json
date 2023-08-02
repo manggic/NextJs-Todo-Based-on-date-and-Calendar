@@ -295,7 +295,7 @@
       ],
       "2": [
         {
-          "name": "exercise",
+          "name": "workout",
           "status": "done"
         },
         {
@@ -307,8 +307,8 @@
           "status": "done"
         },
         {
-          "name": "bath",
-          "status": "not done"
+          "name": "bathing",
+          "status": "done"
         },
         {
           "name": "hair color",
@@ -316,7 +316,7 @@
         },
         {
           "name": "bringraj",
-          "status": "not done"
+          "status": "done"
         },
         {
           "name": "closure video utube",
