@@ -286,7 +286,7 @@
         },
         {
           "name": "brinjraj",
-          "status": "not done"
+          "status": "done"
         },
         {
           "name": "comp closure topic",
@@ -295,7 +295,31 @@
       ],
       "2": [
         {
-          "name": "lunch",
+          "name": "exercise",
+          "status": "done"
+        },
+        {
+          "name": "eye wash",
+          "status": "not done"
+        },
+        {
+          "name": "breakfast",
+          "status": "done"
+        },
+        {
+          "name": "bath",
+          "status": "not done"
+        },
+        {
+          "name": "hair color",
+          "status": "done"
+        },
+        {
+          "name": "bringraj",
+          "status": "not done"
+        },
+        {
+          "name": "closure video utube",
           "status": "not done"
         }
       ],
@@ -311,12 +335,7 @@
       "12": null,
       "13": null,
       "14": null,
-      "15": [
-        {
-          "name": "independence celeb",
-          "status": "not done"
-        }
-      ],
+      "15": null,
       "16": null,
       "17": null,
       "18": null,

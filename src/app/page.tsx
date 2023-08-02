@@ -7,7 +7,7 @@ import { BiPlusCircle } from "react-icons/bi";
 import Modal from "./components/Modal";
 
 import { MdDelete, MdOutlineEdit } from "react-icons/md";
-
+import { RiDeleteBin6Line } from "react-icons/ri";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 export default function Home() {
   // all todos data from json
@@ -44,6 +44,69 @@ export default function Home() {
     }
     return arr;
   }
+
+  let months = {
+    january: {
+      number: "01",
+      shortName: "jan",
+      fullName: "January",
+    },
+    february: {
+      number: "02",
+      shortName: "feb",
+      fullName: "February",
+    },
+    march: {
+      number: "03",
+      shortName: "mar",
+      fullName: "March",
+    },
+    april: {
+      number: "04",
+      shortName: "apr",
+      fullName: "April",
+    },
+    may: {
+      number: "05",
+      shortName: "may",
+      fullName: "May",
+    },
+    june: {
+      number: "06",
+      shortName: "jun",
+      fullName: "June",
+    },
+    july: {
+      number: "07",
+      shortName: "jul",
+      fullName: "July",
+    },
+    august: {
+      number: "08",
+      shortName: "aug",
+      fullName: "August",
+    },
+    september: {
+      number: "09",
+      shortName: "sep",
+      fullName: "September",
+    },
+    october: {
+      number: "10",
+      shortName: "oct",
+      fullName: "October",
+    },
+    november: {
+      number: "11",
+      shortName: "nov",
+      fullName: "November",
+    },
+    december: {
+      number: "12",
+      shortName: "dec",
+      fullName: "December",
+    },
+  };
 
   function fetchCurrentDate() {
     // Get the current date
@@ -127,8 +190,6 @@ export default function Home() {
 
         return;
       }
-
-      console.log("respData", respData);
     } catch (error) {
       console.log("ERROR", error);
     }
@@ -286,6 +347,71 @@ export default function Home() {
     setShowTooltipOn(todo.name);
   }
 
+  async function deleteAllTodo() {
+    //  setTodo([])
+
+    let newTodosData = JSON.parse(JSON.stringify(todosData));
+
+    newTodosData[currentDate.year][selectedMonth][selectedDay] = null;
+
+    const res = await fetch("api/update_json_data", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newTodosData),
+    });
+
+    const resJson = await res.json();
+
+    setCurrentMonthData(newTodosData[currentDate.year][selectedMonth]);
+    setTodosData(newTodosData);
+
+    setTodo([]);
+  }
+
+  // testing date
+  // useEffect(() => {
+  //      console.log('superman ?????',isSelectedDatePrevoius([2, "august", "2023"], [2, "september", "2023"])? "Your date is Prevoius" :"date is next")
+  // }, []);
+
+  function isSelectedDatePrevoius(date2) {
+    // today date - date1
+    // date1 - [04,august,2023]
+
+    // date to check - date2
+    // date2 - [21,july,2024]
+
+    let date1 = [currentDate.day, currentDate.month, currentDate.year];
+
+    let [d1, m1, y1] = date1;
+    let [d2, m2, y2] = date2;
+
+    // year comparison
+    if (parseInt(y2) < parseInt(y1)) {
+      return true;
+    }
+    if (parseInt(y2) > parseInt(y1)) {
+      return false;
+    }
+
+    // month comparison
+    if (parseInt(months[m2].number) < parseInt(months[m1].number)) {
+      return true;
+    }
+
+    if (parseInt(months[m2].number) > parseInt(months[m1].number)) {
+      return false;
+    }
+
+    // days comparison
+    if (parseInt(d2) < parseInt(d1)) {
+      return true;
+    }
+
+    return false;
+  }
+
   return (
     <div className="main flex">
       <div className="left_bar w-1/4 min-h-screen">
@@ -325,16 +451,37 @@ export default function Home() {
             <div>
               Todos{" "}
               {selectedDay
-                ? `(${selectedDay} ${selectedMonth} ${currentDate.year})`
+                ? `(${selectedDay} ${months[selectedMonth].shortName} ${currentDate.year})`
                 : ""}
             </div>
 
-            {selectedDay ? (
+            {selectedDay &&
+            !isSelectedDatePrevoius([
+              selectedDay,
+              selectedMonth,
+              currentDate.year,
+            ]) ? (
               <div
                 className="pl-3 cursor-pointer text-lg"
                 onClick={addTodoInSelectedDate}
               >
                 <AiOutlinePlusCircle />
+              </div>
+            ) : (
+              ""
+            )}
+
+            {todo?.length &&
+            !isSelectedDatePrevoius([
+              selectedDay,
+              selectedMonth,
+              currentDate.year,
+            ]) ? (
+              <div
+                onClick={() => deleteAllTodo()}
+                className="pl-3 cursor-pointer"
+              >
+                <RiDeleteBin6Line />
               </div>
             ) : (
               ""
@@ -350,14 +497,6 @@ export default function Home() {
                       className="px-7 my-3 flex items-center relative"
                       key={t.name}
                     >
-                      {/* {showTooltipOn == t.name ? (
-                        <span className="text-sm absolute border p-1 bottom-7 bg-black rounded w-48 text-center">
-                          {t.name}
-                        </span>
-                      ) : (
-                        ""
-                      )} */}
-
                       {showTooltipOn == t.name ? (
                         <span className="top">
                           {t.name}
@@ -370,46 +509,50 @@ export default function Home() {
                       <span
                         onMouseEnter={() => handleHover(t)}
                         onMouseLeave={() => setShowTooltipOn("")}
-                        className="text-sm"
+                        className="text-sm todo_text"
                       >
                         {t.name.length > 10
                           ? t.name.slice(0, 10) + "..."
                           : t.name}
                       </span>
 
-                      {selectedDay == currentDate.day ? (
+                      {!isSelectedDatePrevoius([
+                        selectedDay,
+                        selectedMonth,
+                        currentDate.year,
+                      ]) ? (
                         <div className="ml-1 cursor-pointer">
                           <MdOutlineEdit />
                         </div>
                       ) : (
-                        <div className="ml-1">
-                          <MdOutlineEdit />
-                        </div>
+                        ""
                       )}
 
-                      {selectedDay == currentDate.day ? (
+                      {!isSelectedDatePrevoius([
+                        selectedDay,
+                        selectedMonth,
+                        currentDate.year,
+                      ]) ? (
                         <div
-                          className="ml-1 cursor-pointer"
+                          className="ml-3 cursor-pointer"
                           onClick={() => deleteTodo(t)}
                         >
                           <MdDelete />
                         </div>
                       ) : (
-                        <div className="ml-1">
-                          <MdDelete />
-                        </div>
+                        ""
                       )}
 
                       {selectedDay == currentDate.day ? (
                         <button
-                          className="ml-1 bg-orange-200	 cursor-pointer rounded-lg p-1 text-xs border border-purple-400 text-black"
+                          className="ml-3 bg-orange-200	 cursor-pointer rounded-lg p-1 text-xs border border-purple-400 text-black"
                           onClick={() => updateTodoStatus(t)}
                         >
                           {t.status === "not done" ? "Not Done" : "Done"}
                         </button>
                       ) : (
                         <span
-                          className="ml-1 bg-orange-200	 p-1 rounded-lg text-xs border border-purple-400 text-black"
+                          className="ml-3 bg-orange-200	 p-1 rounded-lg text-xs border border-purple-400 text-black"
                           // onClick={()=>updateTodoStatus(t)}
                         >
                           {t.status === "not done" ? "Not Done" : "Done"}
