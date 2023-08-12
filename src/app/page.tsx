@@ -458,9 +458,7 @@ export default function Home() {
 
           setShowModal(false)
 
-
-   }
-
+        }
 
   return (
     <div className="main flex">

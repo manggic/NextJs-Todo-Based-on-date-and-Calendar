@@ -34,13 +34,7 @@ body {
   font-size: 1em;
 }
 
-.left_bar{
-  background-color:darkslategray;
-}
 
-.right_bar{
-  background-color: darkslategray;
-}
 
 
 .top {
@@ -85,4 +79,9 @@ body {
 
 .todo_text{
   width: 75px;
+}
+
+
+.main{
+  background-color: #36454F;
 }
