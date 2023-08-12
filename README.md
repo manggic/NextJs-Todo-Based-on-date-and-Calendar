@@ -181,3 +181,65 @@ function generateDefaultCalendarData() {
 module.exports = router;
 
 ```
+
+
+
+### update a task 
+```javascript
+const userEmail = "rajeev@gmail.com";
+const targetDate = new Date("2023-02-14"); // Specify the target date
+
+// Find the user document by email
+const user = db.users.findOne({ email: userEmail });
+
+if (user) {
+  // Find the index of the target date within the "dates" array
+  const targetDateIndex = user.calendar.months.dates.findIndex(date => date.day === targetDate.getDate());
+
+  if (targetDateIndex !== -1) {
+    // Update the task for the specified date
+    user.calendar.months.dates[targetDateIndex].tasks.push({
+      name: "New Task",
+      status: "pending"
+    });
+
+    // Update the user document with the modified calendar data
+    db.users.updateOne({ email: userEmail }, { $set: { calendar: user.calendar } });
+
+    print("Task added successfully!");
+  } else {
+    print("Target date not found.");
+  }
+} else {
+  print("User not found.");
+}
+
+```
+
+### update a task using shell
+
+```javascript
+const userEmail = "rajeev@gmail.com";
+const targetDate = new Date("2023-02-14"); // Specify the target date
+
+// Update the task for the specified date
+db.users.findOneAndUpdate(
+  { email: userEmail, "calendar.months.dates.day": targetDate.getDate() },
+  {
+    $push: {
+      "calendar.months.$[month].dates.$[date].tasks": {
+        name: "New Task",
+        status: "pending"
+      }
+    }
+  },
+  {
+    arrayFilters: [
+      { "month.name": "january" }, // Specify the target month
+      { "date.day": targetDate.getDate() }
+    ],
+    new: true
+  }
+);
+
+```

@@ -9,9 +9,14 @@ import Modal from "./components/Modal";
 import { MdDelete, MdOutlineEdit } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { AiOutlinePlusCircle } from "react-icons/ai";
+import { Toaster, toast } from "react-hot-toast";
+// import { cookies } from 'next/headers'
+
 export default function Home() {
+  const [currentUser, setCurrentUser] = useState({});
+
   // all todos data from json
-  const [todosData, setTodosData] = useState({});
+  const [todosData, setTodosData] = useState([]);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -37,10 +42,10 @@ export default function Home() {
 
   const [showTooltipOn, setShowTooltipOn] = useState("");
 
-   const [editTodoInfo, setEditTodoInfo] = useState({
-         index:null,
-         todo:null
-   })
+  const [editTodoInfo, setEditTodoInfo] = useState({
+    index: null,
+    todo: null,
+  });
 
   function range(no) {
     let arr = [];
@@ -155,20 +160,61 @@ export default function Home() {
     });
   }
 
+  function settingTodosData(data, selMonth) {
+    let todosData = [];
+
+    let calendarData = data.calendar;
+    calendarData.map((year) => {
+      if (year.year == currentDate.year) {
+        year.months.map((month) => {
+          if (month.name == selMonth) {
+            todosData = month.dates;
+          }
+        });
+      }
+    });
+
+    setTodosData(todosData);
+  }
+
+  function settingLhsTodo(data,selMonth , selDay) {
+    let todo = [];
+    let calendarData = data.calendar;
+    calendarData.map((year) => {
+      if (year.year == currentDate.year) {
+        year.months.map((month) => {
+          if (month.name == selMonth) {
+            month.dates.map((day) => {
+              if (day.day == selDay) {
+                todo = day.tasks;
+              }
+            });
+          }
+        });
+      }
+    });
+
+    setTodo(todo);
+  }
+
   const handleSelectChange = (event) => {
     setSelectedMonth(event.target.value);
 
-    setDaysInMonth(
-      Object.keys(
-        todosData?.[currentDate.year]?.[event.target.value.toLowerCase()]
-      )?.length
-    );
+    // setDaysInMonth(
+    //   Object.keys(
+    //     todosData?.[currentDate.year]?.[event.target.value.toLowerCase()]
+    //   )?.length
+    // );
 
-    setSelectedDay(null);
+    setSelectedDay(1);
 
-    setTodo(todosData?.[currentDate.year]?.[event.target.value]);
+    settingTodosData(currentUser, event.target.value);
 
-    setCurrentMonthData(todosData?.[currentDate.year]?.[event.target.value]);
+    settingLhsTodo(currentUser,event.target.value,  1);
+
+    // setTodo(todosData?.[currentDate.year]?.[event.target.value]);
+
+    // setCurrentMonthData(todosData?.[currentDate.year]?.[event.target.value]);
 
     // console.log(event.target.value);
 
@@ -205,10 +251,34 @@ export default function Home() {
     // fetchTodoData();
   }, []);
 
+  const getUser = async () => {
+    const res = await fetch("api/get_user");
+
+    const resJson = await res.json();
+
+    if (resJson.success) {
+      setCurrentUser(resJson.data);
+
+      settingTodosData(resJson.data, selectedMonth);
+
+      settingLhsTodo(resJson.data, selectedMonth, selectedDay);
+    } else {
+      toast.error("Get User failed");
+    }
+  };
+
   useEffect(() => {
-    // This useEffect monitors changes to currentDate and calls fetchTodoData
-    fetchTodoData();
-  }, [currentDate]); // Whenever currentDate changes, this useEffect will be triggered
+    if (selectedMonth) {
+      getUser();
+    }
+
+    return () => {};
+  }, [selectedMonth]);
+
+  // useEffect(() => {
+  //   // This useEffect monitors changes to currentDate and calls fetchTodoData
+  //   fetchTodoData();
+  // }, [currentDate]); // Whenever currentDate changes, this useEffect will be triggered
 
   function addTodoInSelectedDate() {
     setShowModal(true);
@@ -217,13 +287,13 @@ export default function Home() {
   function handleDateClick(ele) {
     setSelectedDay(ele);
 
-    let toDo = todosData[currentDate.year][selectedMonth][ele];
+     settingLhsTodo(currentUser, ele);
 
-    if (toDo) {
-      setTodo(toDo);
-    } else {
-      setTodo([]);
-    }
+    // if (toDo) {
+    //   setTodo(toDo);
+    // } else {
+    //   setTodo([]);
+    // }
   }
 
   async function addTodo(todo) {
@@ -350,7 +420,6 @@ export default function Home() {
 
   function handleHover(todo) {
     setShowTooltipOn(todo.name);
-
   }
 
   async function deleteAllTodo() {
@@ -418,54 +487,49 @@ export default function Home() {
     return false;
   }
 
-  function handleEdit(todo, indexOfTodo){
-
-    setEditTodoInfo({ ...editTodoInfo,  index:indexOfTodo, todo})
-      setShowModal(true)
-
-
-     
-
+  function handleEdit(todo, indexOfTodo) {
+    setEditTodoInfo({ ...editTodoInfo, index: indexOfTodo, todo });
+    setShowModal(true);
   }
 
+  async function editTodo(todo) {
+    let newTodosData = JSON.parse(JSON.stringify(todosData));
 
-  async function editTodo(todo){
-      
-           
-           let newTodosData = JSON.parse(JSON.stringify(todosData));
+    newTodosData[currentDate.year][selectedMonth][selectedDay][
+      editTodoInfo.index
+    ]["name"] = todo;
 
-           newTodosData[currentDate.year][selectedMonth][selectedDay][editTodoInfo.index]['name'] = todo
+    //  console.log('newTodosData ????',newTodosData);
 
-          //  console.log('newTodosData ????',newTodosData);
-           
-          setTodosData(newTodosData)
+    setTodosData(newTodosData);
 
-          setTodo(newTodosData[currentDate.year][selectedMonth][selectedDay])
+    setTodo(newTodosData[currentDate.year][selectedMonth][selectedDay]);
 
+    const res = await fetch("api/update_json_data", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newTodosData),
+    });
 
+    const resJson = await res.json();
 
-
-          const res = await fetch('api/update_json_data',{
-            method:'POST',
-            headers:{
-               'Content-Type':'application/json'
-            },
-            body: JSON.stringify(newTodosData)
-          })
-
-          const resJson = await res.json()
-
-
-          setShowModal(false)
-
-        }
+    setShowModal(false);
+  }
 
   return (
     <div className="main flex">
+      <Toaster />
       <div className="left_bar w-1/4 min-h-screen">
         {showModal ? (
           <div className="absolute left-1/3 z-30">
-            <Modal setShowModal={setShowModal} editTodoInfo={editTodoInfo}  editTodo={editTodo}  addTodo={addTodo} />
+            <Modal
+              setShowModal={setShowModal}
+              editTodoInfo={editTodoInfo}
+              editTodo={editTodo}
+              addTodo={addTodo}
+            />
           </div>
         ) : (
           ""
@@ -569,7 +633,10 @@ export default function Home() {
                         selectedMonth,
                         currentDate.year,
                       ]) ? (
-                        <div onClick={()=>handleEdit(t, index)}  className="ml-1 cursor-pointer">
+                        <div
+                          onClick={() => handleEdit(t, index)}
+                          className="ml-1 cursor-pointer"
+                        >
                           <MdOutlineEdit />
                         </div>
                       ) : (
@@ -632,28 +699,28 @@ export default function Home() {
         </div>
 
         <div className="flex content-start flex-wrap">
-          {Object.entries(currentMonthData).map((ele, index) => {
-            const [key, value] = ele;
+          {todosData.map((todo, index) => {
+            let { day, tasks } = todo;
 
             let classname =
               "h-16 w-1/4 border flex justify-center items-center cursor-pointer";
 
-            if (key == currentDate.day && selectedMonth == currentDate.month) {
+            if (day == currentDate.day && selectedMonth == currentDate.month) {
               classname += " bg-blue-600";
-            } else if (key == selectedDay) {
+            } else if (day == selectedDay) {
               classname += " bg-rose-400";
-            } else if (value?.length) {
+            } else if (tasks?.length) {
               classname += " text-pink-300	drop-shadow-2xl text-xl ";
             } else {
               classname += "";
             }
             return (
               <div
-                key={index}
+                day={index}
                 className={classname}
-                onClick={() => handleDateClick(key)}
+                onClick={() => handleDateClick(day)}
               >
-                {key}
+                {day}
               </div>
             );
           })}
