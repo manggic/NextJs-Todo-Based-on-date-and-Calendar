@@ -219,15 +219,13 @@ if (user) {
 ### update a task using shell
 
 ```javascript
-const userEmail = "rajeev@gmail.com";
-const targetDate = new Date("2023-02-14"); // Specify the target date
-
-// Update the task for the specified date
 db.users.findOneAndUpdate(
-  { email: userEmail, "calendar.months.dates.day": targetDate.getDate() },
+  {
+    email: "m@m.com"
+  },
   {
     $push: {
-      "calendar.months.$[month].dates.$[date].tasks": {
+      "calendar.$[year].months.$[month].dates.$[date].tasks": {
         name: "New Task",
         status: "pending"
       }
@@ -235,11 +233,17 @@ db.users.findOneAndUpdate(
   },
   {
     arrayFilters: [
-      { "month.name": "january" }, // Specify the target month
-      { "date.day": targetDate.getDate() }
+      { "year.year": "2023" },
+      { "month.name": "february" },
+      { "date.day": 14 }
     ],
     new: true
   }
 );
 
 ```
+
+* todo
+
+1) edit 
+2) task status
