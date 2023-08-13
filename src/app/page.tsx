@@ -12,7 +12,10 @@ import { AiOutlinePlusCircle } from "react-icons/ai";
 import { Toaster, toast } from "react-hot-toast";
 // import { cookies } from 'next/headers'
 
+import { useRouter } from "next/navigation";
+
 export default function Home() {
+  const router = useRouter();
   const [currentUser, setCurrentUser] = useState({});
 
   // all todos data from json
@@ -177,7 +180,7 @@ export default function Home() {
     setTodosData(todosData);
   }
 
-  function settingLhsTodo(data,selMonth , selDay) {
+  function settingLhsTodo(data, selMonth, selDay) {
     let todo = [];
     let calendarData = data.calendar;
     calendarData.map((year) => {
@@ -210,7 +213,7 @@ export default function Home() {
 
     settingTodosData(currentUser, event.target.value);
 
-    settingLhsTodo(currentUser,event.target.value,  1);
+    settingLhsTodo(currentUser, event.target.value, 1);
 
     // setTodo(todosData?.[currentDate.year]?.[event.target.value]);
 
@@ -287,7 +290,7 @@ export default function Home() {
   function handleDateClick(ele) {
     setSelectedDay(ele);
 
-     settingLhsTodo(currentUser, ele);
+    settingLhsTodo(currentUser, selectedMonth, ele);
 
     // if (toDo) {
     //   setTodo(toDo);
@@ -298,49 +301,67 @@ export default function Home() {
 
   async function addTodo(todo) {
     try {
-      let fetchData = await fetch("/api/get_json_data");
-
-      let { data } = await fetchData.json();
-
-      console.log(
-        "fetch data res checking",
-        data[currentDate.year][selectedMonth][selectedDay]
-      );
-
-      if (!data[currentDate.year][selectedMonth][selectedDay]) {
-        data[currentDate.year][selectedMonth][selectedDay] = [
-          {
-            name: todo,
-            status: "not done",
-          },
-        ];
-      } else {
-        console.log("history");
-        data[currentDate.year][selectedMonth][selectedDay].push({
-          name: todo,
-          status: "not done",
-        });
-      }
-
-      let updatedData = data;
-
-      let res = await fetch("/api/update_json_data", {
-        method: "POST",
+      let fetchData = await fetch("/api/add_todo", {
+        method:"POST",
         headers: {
-          Content_Type: "application/json",
+          "Content-Type":"application/json"
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+            year: currentDate.year,
+            month:selectedMonth,
+            day:selectedDay,
+            todo,
+            email:currentUser.email
+        })
       });
 
-      let jsonRes = await res.json();
+      const resJson = await fetchData.json()    
 
-      console.log("jsonRes ????", jsonRes);
+    setCurrentUser(resJson.data)
 
-      if (jsonRes.success) {
-        setTodo(data[currentDate.year][selectedMonth][selectedDay]);
+    settingLhsTodo(resJson.data, selectedMonth, selectedDay)
 
-        setTodosData(data);
-      }
+      // let { data } = await fetchData.json();
+
+      // console.log(
+      //   "fetch data res checking",
+      //   data[currentDate.year][selectedMonth][selectedDay]
+      // );
+
+      // if (!data[currentDate.year][selectedMonth][selectedDay]) {
+      //   data[currentDate.year][selectedMonth][selectedDay] = [
+      //     {
+      //       name: todo,
+      //       status: "not done",
+      //     },
+      //   ];
+      // } else {
+      //   console.log("history");
+      //   data[currentDate.year][selectedMonth][selectedDay].push({
+      //     name: todo,
+      //     status: "not done",
+      //   });
+      // }
+
+      // let updatedData = data;
+
+      // let res = await fetch("/api/update_json_data", {
+      //   method: "POST",
+      //   headers: {
+      //     Content_Type: "application/json",
+      //   },
+      //   body: JSON.stringify(data),
+      // });
+
+      // let jsonRes = await res.json();
+
+      // console.log("jsonRes ????", jsonRes);
+
+      // if (jsonRes.success) {
+      //   setTodo(data[currentDate.year][selectedMonth][selectedDay]);
+
+      //   setTodosData(data);
+      // }
 
       setShowModal(false);
       // console.log('response  ????',await res.json());
@@ -351,27 +372,43 @@ export default function Home() {
 
   const deleteTodo = async (todo) => {
     try {
-      let fetchData = await fetch("/api/get_json_data");
-
-      let { data } = await fetchData.json();
-
-      data[currentDate.year][selectedMonth][selectedDay] = data[
-        currentDate.year
-      ][selectedMonth][selectedDay].filter((t) => t.name !== todo.name);
-
-      const res = await fetch("api/update_json_data", {
-        method: "POST",
-        headers: {
-          Content_Type: "application/json",
+      let fetchData = await fetch("/api/delete_todo", {
+        method:"DELETE",
+        headers:{
+          'Content-Type':'application/json'
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({year: currentDate.year,
+          month:selectedMonth,
+          day:selectedDay,
+          todo:todo.name,
+          email:currentUser.email})
       });
 
-      let jsonRes = await res.json();
+        const resJson = await fetchData.json()    
 
-      if (jsonRes.success) {
-        setTodo(data[currentDate.year][selectedMonth][selectedDay]);
-      }
+    setCurrentUser(resJson.data)
+
+    settingLhsTodo(resJson.data, selectedMonth, selectedDay)
+
+      // let { data } = await fetchData.json();
+
+      // data[currentDate.year][selectedMonth][selectedDay] = data[
+      //   currentDate.year
+      // ][selectedMonth][selectedDay].filter((t) => t.name !== todo.name);
+
+      // const res = await fetch("api/update_json_data", {
+      //   method: "POST",
+      //   headers: {
+      //     Content_Type: "application/json",
+      //   },
+      //   body: JSON.stringify(data),
+      // });
+
+      // let jsonRes = await res.json();
+
+      // if (jsonRes.success) {
+      //   setTodo(data[currentDate.year][selectedMonth][selectedDay]);
+      // }
     } catch (error) {
       console.log("ERROR", error);
     }
@@ -422,27 +459,40 @@ export default function Home() {
     setShowTooltipOn(todo.name);
   }
 
+
+  
   async function deleteAllTodo() {
     //  setTodo([])
 
-    let newTodosData = JSON.parse(JSON.stringify(todosData));
+    // let newTodosData = JSON.parse(JSON.stringify(todosData));
 
-    newTodosData[currentDate.year][selectedMonth][selectedDay] = null;
+    // newTodosData[currentDate.year][selectedMonth][selectedDay] = null;
 
-    const res = await fetch("api/update_json_data", {
-      method: "POST",
+    const fetchData = await fetch("api/delete_all_todo", {
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(newTodosData),
+      body: JSON.stringify({
+        year: currentDate.year,
+        month:selectedMonth,
+        day:selectedDay,
+        email:currentUser.email
+      }),
     });
 
-    const resJson = await res.json();
+      const resJson = await fetchData.json()    
 
-    setCurrentMonthData(newTodosData[currentDate.year][selectedMonth]);
-    setTodosData(newTodosData);
+    setCurrentUser(resJson.data)
 
-    setTodo([]);
+    settingLhsTodo(resJson.data, selectedMonth, selectedDay)
+
+    // const resJson = await res.json();
+
+    // setCurrentMonthData(newTodosData[currentDate.year][selectedMonth]);
+    // setTodosData(newTodosData);
+
+    // setTodo([]);
   }
 
   // testing date
@@ -518,10 +568,34 @@ export default function Home() {
     setShowModal(false);
   }
 
+  async function handleLogout() {
+    try {
+      const res = await fetch("/api/signout");
+
+      const resJson = await res.json();
+
+      if (resJson.success) {
+        router.push("/login");
+      } else {
+        toast.error("log out failed");
+      }
+    } catch (error) {
+      toast.error("log out failed");
+    }
+  }
+
   return (
     <div className="main flex">
       <Toaster />
       <div className="left_bar w-1/4 min-h-screen">
+        <div className="mt-4">
+          <button
+            onClick={handleLogout}
+            className="bg-slate-300 text-sm px-3 rounded text-black p-1 ml-4"
+          >
+            log out
+          </button>
+        </div>
         {showModal ? (
           <div className="absolute left-1/3 z-30">
             <Modal
@@ -535,7 +609,7 @@ export default function Home() {
           ""
         )}
 
-        <div className="dropdown text-black pt-20 flex flex-col justify-center items-center">
+        <div className="dropdown text-black pt-12 flex flex-col justify-center items-center">
           <div className="pb-1 text-sm text-white">Select month</div>
           <select
             name="year"

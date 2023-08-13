@@ -31,3 +31,19 @@ const Page = () => {
 };
 
 export default Page;
+
+
+
+// API LAYOUT
+
+// import { NextRequest, NextResponse } from "next/server";
+
+// export async function DELETE() {
+//   try {
+//     return NextResponse.json({ success: true, msg: "SUCCESSFULL" });
+//   } catch (error) {
+//     console.log("ERROR", error);
+
+//     return NextResponse.json({ success: false, msg: "ERROR" });
+//   }
+// }
