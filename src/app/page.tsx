@@ -12,6 +12,9 @@ import { AiOutlinePlusCircle } from "react-icons/ai";
 import { Toaster, toast } from "react-hot-toast";
 // import { cookies } from 'next/headers'
 
+import { FaUserAlt } from "react-icons/fa";
+import { MdLogout } from "react-icons/md";
+
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -32,11 +35,6 @@ export default function Home() {
     month: "",
     year: "",
   });
-
-  const [currentMonthData, setCurrentMonthData] = useState([]);
-
-  // no of days in month
-  const [daysInMonth, setDaysInMonth] = useState(null);
 
   // month selected
   const [selectedMonth, setSelectedMonth] = useState("");
@@ -151,8 +149,6 @@ export default function Home() {
       0
     ).getDate();
 
-    setDaysInMonth(daysInCurrentMonth);
-
     setSelectedMonth(currentMonth);
 
     setSelectedDay(currentDay);
@@ -203,50 +199,11 @@ export default function Home() {
   const handleSelectChange = (event) => {
     setSelectedMonth(event.target.value);
 
-    // setDaysInMonth(
-    //   Object.keys(
-    //     todosData?.[currentDate.year]?.[event.target.value.toLowerCase()]
-    //   )?.length
-    // );
-
     setSelectedDay(1);
 
     settingTodosData(currentUser, event.target.value);
 
     settingLhsTodo(currentUser, event.target.value, 1);
-
-    // setTodo(todosData?.[currentDate.year]?.[event.target.value]);
-
-    // setCurrentMonthData(todosData?.[currentDate.year]?.[event.target.value]);
-
-    // console.log(event.target.value);
-
-    // console.log('length', (Object.keys(todosData[currentDate.year][event.target.value.toLowerCase()]).length))
-  };
-
-  const fetchTodoData = async () => {
-    try {
-      let res = await fetch("/api/get_json_data");
-      let respData = await res.json();
-
-      if (respData.success) {
-        setTodosData(respData.data);
-
-        setTodo(
-          respData.data?.[currentDate.year.toString()]?.[currentDate.month]?.[
-            currentDate.day
-          ]
-        );
-
-        setCurrentMonthData(respData.data[currentDate.year][currentDate.month]);
-      } else {
-        console.log("ERROR: something went wrong");
-
-        return;
-      }
-    } catch (error) {
-      console.log("ERROR", error);
-    }
   };
 
   useEffect(() => {
@@ -278,11 +235,6 @@ export default function Home() {
     return () => {};
   }, [selectedMonth]);
 
-  // useEffect(() => {
-  //   // This useEffect monitors changes to currentDate and calls fetchTodoData
-  //   fetchTodoData();
-  // }, [currentDate]); // Whenever currentDate changes, this useEffect will be triggered
-
   function addTodoInSelectedDate() {
     setShowModal(true);
   }
@@ -291,77 +243,31 @@ export default function Home() {
     setSelectedDay(ele);
 
     settingLhsTodo(currentUser, selectedMonth, ele);
-
-    // if (toDo) {
-    //   setTodo(toDo);
-    // } else {
-    //   setTodo([]);
-    // }
   }
 
   async function addTodo(todo) {
     try {
       let fetchData = await fetch("/api/add_todo", {
-        method:"POST",
+        method: "POST",
         headers: {
-          "Content-Type":"application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            year: currentDate.year,
-            month:selectedMonth,
-            day:selectedDay,
-            todo,
-            email:currentUser.email
-        })
+          year: currentDate.year,
+          month: selectedMonth,
+          day: selectedDay,
+          todo,
+          email: currentUser.email,
+        }),
       });
 
-      const resJson = await fetchData.json()    
+      const resJson = await fetchData.json();
 
-    setCurrentUser(resJson.data)
+      setCurrentUser(resJson.data);
 
-    settingLhsTodo(resJson.data, selectedMonth, selectedDay)
+      settingTodosData(resJson.data, selectedMonth);
 
-      // let { data } = await fetchData.json();
-
-      // console.log(
-      //   "fetch data res checking",
-      //   data[currentDate.year][selectedMonth][selectedDay]
-      // );
-
-      // if (!data[currentDate.year][selectedMonth][selectedDay]) {
-      //   data[currentDate.year][selectedMonth][selectedDay] = [
-      //     {
-      //       name: todo,
-      //       status: "not done",
-      //     },
-      //   ];
-      // } else {
-      //   console.log("history");
-      //   data[currentDate.year][selectedMonth][selectedDay].push({
-      //     name: todo,
-      //     status: "not done",
-      //   });
-      // }
-
-      // let updatedData = data;
-
-      // let res = await fetch("/api/update_json_data", {
-      //   method: "POST",
-      //   headers: {
-      //     Content_Type: "application/json",
-      //   },
-      //   body: JSON.stringify(data),
-      // });
-
-      // let jsonRes = await res.json();
-
-      // console.log("jsonRes ????", jsonRes);
-
-      // if (jsonRes.success) {
-      //   setTodo(data[currentDate.year][selectedMonth][selectedDay]);
-
-      //   setTodosData(data);
-      // }
+      settingLhsTodo(resJson.data, selectedMonth, selectedDay);
 
       setShowModal(false);
       // console.log('response  ????',await res.json());
@@ -373,42 +279,26 @@ export default function Home() {
   const deleteTodo = async (todo) => {
     try {
       let fetchData = await fetch("/api/delete_todo", {
-        method:"DELETE",
-        headers:{
-          'Content-Type':'application/json'
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({year: currentDate.year,
-          month:selectedMonth,
-          day:selectedDay,
-          todo:todo.name,
-          email:currentUser.email})
+        body: JSON.stringify({
+          year: currentDate.year,
+          month: selectedMonth,
+          day: selectedDay,
+          todo: todo.name,
+          email: currentUser.email,
+        }),
       });
 
-        const resJson = await fetchData.json()    
+      const resJson = await fetchData.json();
 
-    setCurrentUser(resJson.data)
+      setCurrentUser(resJson.data);
 
-    settingLhsTodo(resJson.data, selectedMonth, selectedDay)
+      settingTodosData(resJson.data, selectedMonth);
 
-      // let { data } = await fetchData.json();
-
-      // data[currentDate.year][selectedMonth][selectedDay] = data[
-      //   currentDate.year
-      // ][selectedMonth][selectedDay].filter((t) => t.name !== todo.name);
-
-      // const res = await fetch("api/update_json_data", {
-      //   method: "POST",
-      //   headers: {
-      //     Content_Type: "application/json",
-      //   },
-      //   body: JSON.stringify(data),
-      // });
-
-      // let jsonRes = await res.json();
-
-      // if (jsonRes.success) {
-      //   setTodo(data[currentDate.year][selectedMonth][selectedDay]);
-      // }
+      settingLhsTodo(resJson.data, selectedMonth, selectedDay);
     } catch (error) {
       console.log("ERROR", error);
     }
@@ -416,40 +306,28 @@ export default function Home() {
 
   async function updateTodoStatus(todo) {
     try {
-      let fetchData = await fetch("/api/get_json_data");
-
-      let { data } = await fetchData.json();
-
-      let finalObj = [];
-
-      console.log("todo ????", todo);
-
-      data[currentDate.year][selectedMonth][selectedDay].forEach((t) => {
-        if (todo.name === t.name) {
-          finalObj.push({
-            ...t,
-            status: t.status === "not done" ? "done" : "not done",
-          });
-        } else {
-          finalObj.push(t);
-        }
-      });
-
-      data[currentDate.year][selectedMonth][selectedDay] = finalObj;
-
-      let res = await fetch("api/update_json_data", {
-        method: "POST",
+      const fetchData = await fetch("/api/edit_todo", {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          year: currentDate.year,
+          month: selectedMonth,
+          day: selectedDay,
+          newTodo: { ...todo, status: !todo.status },
+          previousTodo: todo,
+          email: currentUser.email,
+        }),
       });
 
-      let resJson = await res.json();
+      const resJson = await fetchData.json();
 
-      if (resJson.success) {
-        setTodo(finalObj);
-      }
+      setCurrentUser(resJson.data);
+
+      settingTodosData(resJson.data, selectedMonth);
+
+      settingLhsTodo(resJson.data, selectedMonth, selectedDay);
     } catch (error) {
       console.log("ERROR", error);
     }
@@ -459,15 +337,7 @@ export default function Home() {
     setShowTooltipOn(todo.name);
   }
 
-
-  
   async function deleteAllTodo() {
-    //  setTodo([])
-
-    // let newTodosData = JSON.parse(JSON.stringify(todosData));
-
-    // newTodosData[currentDate.year][selectedMonth][selectedDay] = null;
-
     const fetchData = await fetch("api/delete_all_todo", {
       method: "DELETE",
       headers: {
@@ -475,30 +345,19 @@ export default function Home() {
       },
       body: JSON.stringify({
         year: currentDate.year,
-        month:selectedMonth,
-        day:selectedDay,
-        email:currentUser.email
+        month: selectedMonth,
+        day: selectedDay,
+        email: currentUser.email,
       }),
     });
 
-      const resJson = await fetchData.json()    
+    const resJson = await fetchData.json();
 
-    setCurrentUser(resJson.data)
+    setCurrentUser(resJson.data);
+    settingTodosData(resJson.data, selectedMonth);
 
-    settingLhsTodo(resJson.data, selectedMonth, selectedDay)
-
-    // const resJson = await res.json();
-
-    // setCurrentMonthData(newTodosData[currentDate.year][selectedMonth]);
-    // setTodosData(newTodosData);
-
-    // setTodo([]);
+    settingLhsTodo(resJson.data, selectedMonth, selectedDay);
   }
-
-  // testing date
-  // useEffect(() => {
-  //      console.log('superman ?????',isSelectedDatePrevoius([2, "august", "2023"], [2, "september", "2023"])? "Your date is Prevoius" :"date is next")
-  // }, []);
 
   function isSelectedDatePrevoius(date2) {
     // today date - date1
@@ -539,31 +398,33 @@ export default function Home() {
 
   function handleEdit(todo, indexOfTodo) {
     setEditTodoInfo({ ...editTodoInfo, index: indexOfTodo, todo });
+
+    console.log({ ...editTodoInfo, index: indexOfTodo, todo });
+
     setShowModal(true);
   }
 
   async function editTodo(todo) {
-    let newTodosData = JSON.parse(JSON.stringify(todosData));
-
-    newTodosData[currentDate.year][selectedMonth][selectedDay][
-      editTodoInfo.index
-    ]["name"] = todo;
-
-    //  console.log('newTodosData ????',newTodosData);
-
-    setTodosData(newTodosData);
-
-    setTodo(newTodosData[currentDate.year][selectedMonth][selectedDay]);
-
-    const res = await fetch("api/update_json_data", {
-      method: "POST",
+    const fetchData = await fetch("/api/edit_todo", {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(newTodosData),
+      body: JSON.stringify({
+        year: currentDate.year,
+        month: selectedMonth,
+        day: selectedDay,
+        email: currentUser.email,
+        previousTodo: editTodoInfo.todo,
+        newTodo: todo,
+      }),
     });
 
-    const resJson = await res.json();
+    const resJson = await fetchData.json();
+
+    setCurrentUser(resJson.data);
+
+    settingLhsTodo(resJson.data, selectedMonth, selectedDay);
 
     setShowModal(false);
   }
@@ -589,12 +450,16 @@ export default function Home() {
       <Toaster />
       <div className="left_bar w-1/4 min-h-screen">
         <div className="mt-4">
-          <button
+          <div className="flex items-center pl-4">
+            <FaUserAlt />
+            <span className="pl-2"> {currentUser.name}</span>
+          </div>
+          {/* <button
             onClick={handleLogout}
             className="bg-slate-300 text-sm px-3 rounded text-black p-1 ml-4"
           >
             log out
-          </button>
+          </button> */}
         </div>
         {showModal ? (
           <div className="absolute left-1/3 z-30">
@@ -632,7 +497,7 @@ export default function Home() {
             <option value="december">december</option>
           </select>
         </div>
-        <div className="todos ">
+        <div className="todos">
           <div className="text-white pt-20 pl-7 font-bold flex items-center">
             <div>
               Todos{" "}
@@ -732,19 +597,23 @@ export default function Home() {
                         ""
                       )}
 
-                      {selectedDay == currentDate.day ? (
+                      {!isSelectedDatePrevoius([
+                        selectedDay,
+                        selectedMonth,
+                        currentDate.year,
+                      ]) ? (
                         <button
                           className="ml-3 bg-orange-200	 cursor-pointer rounded-lg p-1 text-xs border border-purple-400 text-black"
                           onClick={() => updateTodoStatus(t)}
                         >
-                          {t.status === "not done" ? "Not Done" : "Done"}
+                          {!t.status ? "Not Done" : "Done"}
                         </button>
                       ) : (
                         <span
                           className="ml-3 bg-orange-200	 p-1 rounded-lg text-xs border border-purple-400 text-black"
                           // onClick={()=>updateTodoStatus(t)}
                         >
-                          {t.status === "not done" ? "Not Done" : "Done"}
+                          {!t.status ? "Not Done" : "Done"}
                         </span>
                       )}
                     </li>
@@ -755,6 +624,13 @@ export default function Home() {
           ) : (
             <div className="text-white px-7 my-3">Empty!!!!</div>
           )}
+        </div>
+
+        <div
+          onClick={handleLogout}
+          className=" cursor-pointer absolute left-5 bottom-6 text-xl	"
+        >
+          <MdLogout />
         </div>
       </div>
 

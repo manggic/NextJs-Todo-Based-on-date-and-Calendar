@@ -9,7 +9,7 @@ const Modal = ({ setShowModal, addTodo, editTodoInfo , editTodo}) => {
   
 
     if(editTodoInfo?.todo?.name){
-      editTodo(modalTodo)
+      editTodo( {name:modalTodo, status:editTodoInfo.todo.status  }  )
     }else if (modalTodo) {
       addTodo(modalTodo);
     } else {
