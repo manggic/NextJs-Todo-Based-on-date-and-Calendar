@@ -427,6 +427,11 @@ export default function Home() {
     settingLhsTodo(resJson.data, selectedMonth, selectedDay);
 
     setShowModal(false);
+
+    setEditTodoInfo({
+      index: null,
+      todo: null,
+    })
   }
 
   async function handleLogout() {
@@ -462,12 +467,13 @@ export default function Home() {
           </button> */}
         </div>
         {showModal ? (
-          <div className="absolute left-1/3 z-30">
+          <div className="absolute left-1/3 z-30 top-0">
             <Modal
               setShowModal={setShowModal}
               editTodoInfo={editTodoInfo}
               editTodo={editTodo}
               addTodo={addTodo}
+              setEditTodoInfo={setEditTodoInfo}
             />
           </div>
         ) : (
