@@ -243,7 +243,60 @@ db.users.findOneAndUpdate(
 
 ```
 
+
+## edit a todo code 
+
+```javascript
+import { NextRequest, NextResponse } from "@next/server"; // Make sure this is the correct import path
+import User from '@/models/UserModel';
+
+export async function PUT(request: NextRequest) {
+  try {
+    const { year, month, day, taskName, updatedTask, email } = await request.json();
+
+    const user = await User.findOne({ email });
+
+    if (user) {
+      const updatedUser = await User.findOneAndUpdate(
+        {
+          email
+        },
+        {
+          $set: {
+            'calendar.$[year].months.$[month].dates.$[date].tasks.$[task].name': updatedTask.name,
+            'calendar.$[year].months.$[month].dates.$[date].tasks.$[task].status': updatedTask.status
+          }
+        },
+        {
+          arrayFilters: [
+            { 'year.year': year },
+            { 'month.name': month },
+            { 'date.day': day },
+            { 'task.name': taskName }
+          ],
+          new: true
+        }
+      );
+
+      return NextResponse.json({
+        success: true,
+        msg: "Todo updated successfully",
+        data: updatedUser
+      });
+    } else {
+      return NextResponse.json({ success: false, msg: "User not found" });
+    }
+  } catch (error) {
+    console.error('ERROR', error);
+    return NextResponse.json({ success: false });
+  }
+}
+
+```
+
+
+
+
 * todo
 
-1) edit 
-2) task status
+2) addtodo pop-up position is not proper
