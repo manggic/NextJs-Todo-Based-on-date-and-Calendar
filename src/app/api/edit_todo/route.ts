@@ -7,9 +7,6 @@ export async function PUT(request: NextRequest) {
       await request.json();
     const user = await User.findOne({ email });
 
-    console.log({ newTodo });
-    console.log({ previousTodo });
-
     if (user) {
       const updatedUser = await User.findOneAndUpdate(
         {

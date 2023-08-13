@@ -52,10 +52,6 @@ export async function POST(request: NextRequest) {
     // fetch name, email and password from POST request
     const { name, email, password } = await request.json();
 
-    console.log("name ???", name);
-    console.log("email ???", email);
-    console.log("password ???", password);
-
     // checking if user already present or not
     const user = await User.findOne({ email });
 
