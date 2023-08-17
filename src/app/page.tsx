@@ -212,7 +212,7 @@ export default function Home() {
   }, []);
 
   const getUser = async () => {
-    const res = await fetch("api/get_user");
+    const res = await fetch("/api/get_user");
 
     const resJson = await res.json();
 
