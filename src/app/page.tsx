@@ -19,15 +19,15 @@ import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
-  const [currentUser, setCurrentUser] = useState({});
+  const [currentUser, setCurrentUser] = useState<any>({});
 
   // all todos data from json
-  const [todosData, setTodosData] = useState([]);
+  const [todosData, setTodosData] = useState<any[]>([]);
 
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   // single todo to show on lhs
-  const [todo, setTodo] = useState([]);
+  const [todo, setTodo] = useState<any[]>([]);
 
   // current date
   const [currentDate, setCurrentDate] = useState({
@@ -37,24 +37,24 @@ export default function Home() {
   });
 
   // month selected
-  const [selectedMonth, setSelectedMonth] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState<string>("");
 
-  const [selectedDay, setSelectedDay] = useState("");
+  const [selectedDay, setSelectedDay] = useState<null | number>(null);
 
-  const [showTooltipOn, setShowTooltipOn] = useState("");
+  const [showTooltipOn, setShowTooltipOn] = useState<string>("");
 
   const [editTodoInfo, setEditTodoInfo] = useState({
     index: null,
     todo: null,
   });
 
-  function range(no) {
-    let arr = [];
-    for (let i = 1; i <= no; i++) {
-      arr.push(i);
-    }
-    return arr;
-  }
+  // function range(no) {
+  //   let arr = [];
+  //   for (let i = 1; i <= no; i++) {
+  //     arr.push(i);
+  //   }
+  //   return arr;
+  // }
 
   let months = {
     january: {
@@ -153,19 +153,19 @@ export default function Home() {
 
     setSelectedDay(currentDay);
     setCurrentDate({
-      day: currentDay,
-      month: currentMonth,
-      year: currentYear,
+      day: currentDay.toString(),
+      month: currentMonth.toString(),
+      year: currentYear.toString(),
     });
   }
 
-  function settingTodosData(data, selMonth) {
-    let todosData = [];
+  function settingTodosData(data:any, selMonth:any) {
+    let todosData:any[] = [];
 
     let calendarData = data.calendar;
-    calendarData.map((year) => {
+    calendarData.map((year:any) => {
       if (year.year == currentDate.year) {
-        year.months.map((month) => {
+        year.months.map((month:any) => {
           if (month.name == selMonth) {
             todosData = month.dates;
           }
@@ -176,14 +176,14 @@ export default function Home() {
     setTodosData(todosData);
   }
 
-  function settingLhsTodo(data, selMonth, selDay) {
-    let todo = [];
+  function settingLhsTodo(data:any, selMonth:any, selDay:any) {
+    let todo:any[] = [];
     let calendarData = data.calendar;
-    calendarData.map((year) => {
+    calendarData.map((year:any) => {
       if (year.year == currentDate.year) {
-        year.months.map((month) => {
+        year.months.map((month:any) => {
           if (month.name == selMonth) {
-            month.dates.map((day) => {
+            month.dates.map((day:any) => {
               if (day.day == selDay) {
                 todo = day.tasks;
               }
@@ -196,7 +196,7 @@ export default function Home() {
     setTodo(todo);
   }
 
-  const handleSelectChange = (event) => {
+  const handleSelectChange = (event :any) => {
     setSelectedMonth(event.target.value);
 
     setSelectedDay(1);
@@ -239,13 +239,13 @@ export default function Home() {
     setShowModal(true);
   }
 
-  function handleDateClick(ele) {
+  function handleDateClick(ele:any) {
     setSelectedDay(ele);
 
     settingLhsTodo(currentUser, selectedMonth, ele);
   }
 
-  async function addTodo(todo) {
+  async function addTodo(todo:any) {
     try {
       let fetchData = await fetch("/api/add_todo", {
         method: "POST",
@@ -276,7 +276,7 @@ export default function Home() {
     }
   }
 
-  const deleteTodo = async (todo) => {
+  const deleteTodo = async (todo:any) => {
     try {
       let fetchData = await fetch("/api/delete_todo", {
         method: "DELETE",
@@ -304,7 +304,7 @@ export default function Home() {
     }
   };
 
-  async function updateTodoStatus(todo) {
+  async function updateTodoStatus(todo:any) {
     try {
       const fetchData = await fetch("/api/edit_todo", {
         method: "PUT",
@@ -333,7 +333,7 @@ export default function Home() {
     }
   }
 
-  function handleHover(todo) {
+  function handleHover(todo :any) {
     setShowTooltipOn(todo.name);
   }
 
@@ -359,7 +359,7 @@ export default function Home() {
     settingLhsTodo(resJson.data, selectedMonth, selectedDay);
   }
 
-  function isSelectedDatePrevoius(date2) {
+  function isSelectedDatePrevoius(date2 :any) {
     // today date - date1
     // date1 - [04,august,2023]
 
@@ -380,11 +380,11 @@ export default function Home() {
     }
 
     // month comparison
-    if (parseInt(months[m2].number) < parseInt(months[m1].number)) {
+    if (parseInt(months[m2 as keyof typeof months].number) < parseInt(months[m1 as keyof typeof months].number)) {
       return true;
     }
 
-    if (parseInt(months[m2].number) > parseInt(months[m1].number)) {
+    if (parseInt(months[m2 as keyof typeof months].number) > parseInt(months[m1 as keyof typeof months].number)) {
       return false;
     }
 
@@ -396,7 +396,7 @@ export default function Home() {
     return false;
   }
 
-  function handleEdit(todo, indexOfTodo) {
+  function handleEdit(todo :any, indexOfTodo :any) {
     setEditTodoInfo({ ...editTodoInfo, index: indexOfTodo, todo });
 
     console.log({ ...editTodoInfo, index: indexOfTodo, todo });
@@ -404,7 +404,7 @@ export default function Home() {
     setShowModal(true);
   }
 
-  async function editTodo(todo) {
+  async function editTodo(todo :any) {
     const fetchData = await fetch("/api/edit_todo", {
       method: "PUT",
       headers: {
@@ -508,7 +508,7 @@ export default function Home() {
             <div>
               Todos{" "}
               {selectedDay
-                ? `(${selectedDay} ${months[selectedMonth].shortName} ${currentDate.year})`
+                ? `(${selectedDay} ${months[selectedMonth as keyof typeof months].shortName} ${currentDate.year})`
                 : ""}
             </div>
 
@@ -672,9 +672,9 @@ export default function Home() {
             }
             return (
               <div
-                day={index}
                 className={classname}
                 onClick={() => handleDateClick(day)}
+                key={index}
               >
                 {day}
               </div>

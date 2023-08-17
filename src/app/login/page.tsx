@@ -33,7 +33,7 @@ const LoginPage = () => {
       } else {
         toast.error("Please enter all the details");
       }
-    } catch (error) {
+    } catch (error:any) {
       toast.error(error);
     }
   };

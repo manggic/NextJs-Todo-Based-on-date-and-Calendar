@@ -2,10 +2,18 @@
 
 import React, { useEffect, useState } from "react";
 
+
+// Define a type for your data
+type MyData = {
+  results?: any[]; // Adjust the type as per the actual structure of your data
+  // ... other properties you expect in the data object
+};
+
+
 const Page = () => {
 
 
-  const [data, setData] = useState('')  
+  const [data, setData] = useState<MyData>({})  
 
   async function callAPI() {
    const data = await fetch("https://randomuser.me/api/");
