@@ -223,6 +223,9 @@ export default function Home() {
 
       settingLhsTodo(resJson.data, selectedMonth, selectedDay);
     } else {
+
+      console.log(resJson?.msg);
+      
       toast.error("Get User failed");
     }
   };

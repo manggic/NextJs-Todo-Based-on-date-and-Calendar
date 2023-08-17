@@ -5,7 +5,8 @@ import User from "@/models/UserModel";
 import jwt from "jsonwebtoken";
 
 import bcrypt from "bcryptjs";
-
+import { connect } from "@/db/config";
+connect()
 export async function POST(request: Request) {
   try {
     const res = await request.json();
@@ -39,6 +40,9 @@ export async function POST(request: Request) {
 
     return response;
   } catch (error) {
+
+    console.log('ERROR', error);
+    
     return NextResponse.json({ success: false, msg: "login failed" });
   }
 }
