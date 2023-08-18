@@ -10,7 +10,7 @@ export function middleware(request: NextRequest) {
   if (!token) {
     return NextResponse.redirect(new URL("/signup", request.url));
   }
-
+  return null
 }
 
 // See "Matching Paths" below to learn more
