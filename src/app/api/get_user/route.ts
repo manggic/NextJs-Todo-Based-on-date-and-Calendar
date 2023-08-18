@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         success: false,
         msg: `token is not available`,
-        reqCookiesLog:request.cookies
+        reqCookiesLog:request
       });
     }
 
