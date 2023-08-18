@@ -10,16 +10,11 @@ export function middleware(request: NextRequest) {
   if (!token) {
     return NextResponse.redirect(new URL("/signup", request.url));
   }
-
-  const response = NextResponse.next()
-
-  response.cookies.set('token', token)
-
-  return response
+  return null
 
 }
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ["/sin"],
+  matcher: ["/"],
 };
