@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { cookies } from 'next/headers'
 
 import User from "@/models/UserModel";
 import { connect } from "@/db/config";
@@ -8,7 +9,12 @@ import { connect } from "@/db/config";
 connect();
 export async function GET(request: NextRequest) {
   try {
-    const token = request.cookies.get("token")?.value;
+
+
+
+    const cookieStore = cookies()
+    const token = cookieStore.get('token')
+    // const token = request.cookies.get("token")?.value;
     
     if (!token) {
       return NextResponse.json({
