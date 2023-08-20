@@ -9,9 +9,6 @@ import { connect } from "@/db/config";
 connect();
 export async function GET(request:NextRequest) {
   try {
-
-
-
     // const cookieStore = cookies()
     // const token = cookieStore.get('token')?.value
     const token = request.cookies.get("token")?.value;
@@ -23,7 +20,7 @@ export async function GET(request:NextRequest) {
       return NextResponse.json({
         success: false,
         msg: `token is not available`,
-        reqCookiesLog:request
+        reqCookiesLog:request.cookies.get("token")
       });
     }
 
