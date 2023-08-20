@@ -12,9 +12,9 @@ export async function GET(request: Request) {
 
 
 
-    // const cookieStore = cookies()
-    // const token = cookieStore.get('token')?.value
-    const token = request.cookies.get("token")?.value;
+    const cookieStore = cookies()
+    const token = cookieStore.get('token')?.value
+    // const token = request.cookies.get("token")?.value;
     
 
     console.log('token ???', token);
