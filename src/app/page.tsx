@@ -212,7 +212,8 @@ export default function Home() {
   }, []);
 
   const getUser = async () => {
-    const res = await fetch("/api/get_user");
+    const { signal } = new AbortController()
+    const res = await fetch("/api/get_user" , {signal});
 
     const resJson = await res.json();
 
