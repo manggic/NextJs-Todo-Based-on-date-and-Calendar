@@ -7,14 +7,14 @@ import User from "@/models/UserModel";
 import { connect } from "@/db/config";
 
 connect();
-export async function GET(request: Request) {
+export async function GET(request:NextRequest) {
   try {
 
 
 
-    const cookieStore = cookies()
-    const token = cookieStore.get('token')?.value
-    // const token = request.cookies.get("token")?.value;
+    // const cookieStore = cookies()
+    // const token = cookieStore.get('token')?.value
+    const token = request.cookies.get("token")?.value;
     
 
     console.log('token ???', token);
