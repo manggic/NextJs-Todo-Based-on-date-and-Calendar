@@ -7,6 +7,9 @@ import User from "@/models/UserModel";
 import { connect } from "@/db/config";
 
 connect();
+
+export const dynamic = 'force-dynamic'
+
 export async function GET(request:NextRequest) {
   try {
     // const cookieStore = cookies()
