@@ -19,11 +19,7 @@ const {
   DOMAIN,
 } = process.env;
 
-
-
-
-console.log(HOST,PORT_NO, USER_EMAIL, USER_PASS, DOMAIN );
-
+console.log(HOST, PORT_NO, USER_EMAIL, USER_PASS, DOMAIN);
 
 type inputParams = {
   email: string;
@@ -33,6 +29,8 @@ type inputParams = {
 
 export const sendEmail = async ({ email, emailType, userId }: inputParams) => {
   try {
+    console.log(email, emailType, userId);
+
     const hashedToken = await bcryptjs.hash(email, 10);
 
     if (emailType === "VERIFY") {
@@ -73,12 +71,15 @@ export const sendEmail = async ({ email, emailType, userId }: inputParams) => {
       }</p>`,
     };
 
-    console.log(`<p>click<a href="${DOMAIN}/${
-      emailType === "VERIFY" ? "verifyemail" : "forgotpassword"
-    }?token=${hashedToken}"> here</a> to ${
-      emailType === "VERIFY" ? "verify your email" : "reset your password"
-    }</p>`);
-    
+    console.log(
+      `<p>click<a href="${DOMAIN}/${
+        emailType === "VERIFY" ? "verifyemail" : "forgotpassword"
+      }?token=${hashedToken}"> here</a> to ${
+        emailType === "VERIFY" ? "verify your email" : "reset your password"
+      }</p>`
+    );
+
+    console.log("before sending mail");
 
     transport.sendMail(mailOptions, async (error: any, info: any) => {
       if (error) {
@@ -93,6 +94,8 @@ export const sendEmail = async ({ email, emailType, userId }: inputParams) => {
         };
       }
     });
+
+    console.log("after sending mail");
 
     return { success: true, msg: "successfully sent email" };
   } catch (error: any) {
