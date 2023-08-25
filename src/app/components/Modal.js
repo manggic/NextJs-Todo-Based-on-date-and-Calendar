@@ -1,34 +1,37 @@
 import { useState } from "react";
 import { AiFillCloseCircle } from "react-icons/ai";
 
-const Modal = ({ setShowModal, addTodo, editTodoInfo , editTodo, setEditTodoInfo}) => {
-  const [modalTodo, setModalTodo] = useState(editTodoInfo?.todo?.name || '');
-
+const Modal = ({
+  setShowModal,
+  addTodo,
+  editTodoInfo,
+  editTodo,
+  setEditTodoInfo,
+}) => {
+  const [modalTodo, setModalTodo] = useState(editTodoInfo?.todo?.name || "");
 
   function handleSubmit() {
-  
-
-    if(editTodoInfo?.todo?.name){
-      editTodo( {name:modalTodo, status:editTodoInfo.todo.status  }  )
-    }else if (modalTodo) {
+    if (editTodoInfo?.todo?.name) {
+      editTodo({ name: modalTodo, status: editTodoInfo.todo.status });
+    } else if (modalTodo) {
       addTodo(modalTodo);
     } else {
       setModalTodo(false);
     }
   }
 
-  const closePopup = ()=> {
-    setShowModal(false)
+  const closePopup = () => {
+    setShowModal(false);
     setEditTodoInfo({
       index: null,
       todo: null,
-    })
-  }
+    });
+  };
 
   return (
     <div className="h-52 bg-gray-50 py-20 px-16">
       <div
-        onClick={() => closePopup() }
+        onClick={() => closePopup()}
         className="absolute right-3 top-3 text-black text-lg cursor-pointer"
       >
         <AiFillCloseCircle />

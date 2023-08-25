@@ -5,6 +5,7 @@ import User from "@/models/UserModel";
 import { connect } from "@/db/config";
 
 import bcrypt from "bcryptjs";
+import { sendEmail } from "@/helpers/mailer";
 
 connect();
 
@@ -75,6 +76,8 @@ export async function POST(request: NextRequest) {
     });
 
     await savedUser.save();
+
+    await sendEmail({ email, emailType: "VERIFY", userId: savedUser._id });
 
     return NextResponse.json({
       success: true,

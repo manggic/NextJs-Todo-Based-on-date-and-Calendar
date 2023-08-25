@@ -225,8 +225,7 @@ export default function Home() {
       settingLhsTodo(resJson.data, selectedMonth, selectedDay);
     } else {
 
-      console.log(resJson?.msg);
-      
+      console.log(resJson?.msg);  
       toast.error("Get User failed");
     }
   };
@@ -274,7 +273,6 @@ export default function Home() {
       settingLhsTodo(resJson.data, selectedMonth, selectedDay);
 
       setShowModal(false);
-      // console.log('response  ????',await res.json());
     } catch (error) {
       console.log("ERROR ????", error);
     }
@@ -402,9 +400,6 @@ export default function Home() {
 
   function handleEdit(todo :any, indexOfTodo :any) {
     setEditTodoInfo({ ...editTodoInfo, index: indexOfTodo, todo });
-
-    console.log({ ...editTodoInfo, index: indexOfTodo, todo });
-
     setShowModal(true);
   }
 
