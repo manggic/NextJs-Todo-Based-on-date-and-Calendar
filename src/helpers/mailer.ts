@@ -45,12 +45,12 @@ export const sendEmail = async ({ email, emailType, userId }: inputParams) => {
     }
 
     const transport = nodemailer.createTransport({
-      host: HOST,
-      port: PORT_NO,
+      host: HOST as string,
+      port: parseInt(PORT_NO as string),
       secure: true,
       auth: {
-        user: USER_EMAIL,
-        pass: USER_PASS,
+        user: USER_EMAIL as string,
+        pass: USER_PASS as string,
       },
     });
 
