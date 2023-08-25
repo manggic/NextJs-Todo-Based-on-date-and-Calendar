@@ -19,6 +19,12 @@ const {
   DOMAIN,
 } = process.env;
 
+
+
+
+console.log(HOST,PORT_NO, USER_EMAIL, USER_PASS, DOMAIN );
+
+
 type inputParams = {
   email: string;
   emailType: string;
@@ -66,6 +72,13 @@ export const sendEmail = async ({ email, emailType, userId }: inputParams) => {
         emailType === "VERIFY" ? "verify your email" : "reset your password"
       }</p>`,
     };
+
+    console.log(`<p>click<a href="${DOMAIN}/${
+      emailType === "VERIFY" ? "verifyemail" : "forgotpassword"
+    }?token=${hashedToken}"> here</a> to ${
+      emailType === "VERIFY" ? "verify your email" : "reset your password"
+    }</p>`);
+    
 
     transport.sendMail(mailOptions, async (error: any, info: any) => {
       if (error) {
