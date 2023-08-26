@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!user) {
-      return NextResponse.json({ success: false, msg: "Invalid Token" });
+      return NextResponse.json({ success: false, msg: `Invalid Token ${token} ${Date.now()}` });
     }
 
     user.isVerified = true;
