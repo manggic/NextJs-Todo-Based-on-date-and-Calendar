@@ -21,7 +21,7 @@ const ForgotPasswordPage = () => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              token: window.location.search.split("=")[1],
+              token: decodeURIComponent(window.location.search.split("=")[1]),
               password,
               confirmpassword,
             }),
