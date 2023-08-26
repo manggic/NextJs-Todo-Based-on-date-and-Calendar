@@ -89,6 +89,7 @@ export async function POST(request: NextRequest) {
       msg: "sign up done",
       data: savedUser,
       sendEmailResponse: sendEmailResp.data,
+      timeAddingVerifyTokenInDB: sendEmailResp.currentTime
     });
   } catch (error) {
     console.log("error", error);

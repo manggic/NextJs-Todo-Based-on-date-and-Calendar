@@ -38,6 +38,9 @@ export const sendEmail = async ({ email, emailType, userId }: inputParams) => {
         verifyToken: hashedToken,
         verifyTokenExpiry: Date.now() + 3600000,
       });
+
+      console.log('Date.now() + 3600000', Date.now() + 3600000);
+      
     } else if (emailType === "RESET") {
       await User.findOneAndUpdate(
         { email },
@@ -81,7 +84,7 @@ export const sendEmail = async ({ email, emailType, userId }: inputParams) => {
 
     const sendMail = await transport.sendMail(mailOptions);
 
-    return { success: true, msg: "successfully sent email", data: sendMail };
+    return { success: true, msg: "successfully sent email", data: sendMail, currentTime:Date.now() + 3600000 };
   } catch (error: any) {
     return { success: false, msg: error.message };
   }
