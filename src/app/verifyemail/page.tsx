@@ -9,8 +9,7 @@ const VerifyPage = () => {
   const [status, setStatus] = useState("Verifying...");
 
   useEffect(() => {
-    setToken(window.location.search.split("=")[1]);
-
+    setToken(decodeURIComponent(window.location.search.split("=")[1]));
     return () => {};
   }, []);
 
