@@ -79,25 +79,9 @@ export const sendEmail = async ({ email, emailType, userId }: inputParams) => {
       }</p>`
     );
 
-    console.log("before sending mail");
+    const sendMail = await transport.sendMail(mailOptions);
 
-    transport.sendMail(mailOptions, async (error: any, info: any) => {
-      if (error) {
-        console.error("Email sending error:", error);
-        return { success: false, msg: "Sent Email failed" };
-      } else {
-        console.log("Email sent:", info.response);
-        return {
-          success: true,
-          msg: "successfully sent email",
-          data: info.response,
-        };
-      }
-    });
-
-    console.log("after sending mail");
-
-    return { success: true, msg: "successfully sent email" };
+    return { success: true, msg: "successfully sent email", data: sendMail };
   } catch (error: any) {
     return { success: false, msg: error.message };
   }

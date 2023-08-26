@@ -77,12 +77,18 @@ export async function POST(request: NextRequest) {
 
     await savedUser.save();
 
-    await sendEmail({ email, emailType: "VERIFY", userId: savedUser._id });
+    const sendEmailResp = await sendEmail({
+      email,
+      emailType: "VERIFY",
+      userId: savedUser._id,
+    });
+    console.log("sendEmailResp ????", sendEmailResp);
 
     return NextResponse.json({
       success: true,
       msg: "sign up done",
       data: savedUser,
+      sendEmailResponse: sendEmailResp.data,
     });
   } catch (error) {
     console.log("error", error);
