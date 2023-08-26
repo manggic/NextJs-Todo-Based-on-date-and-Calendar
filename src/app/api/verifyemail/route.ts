@@ -28,6 +28,9 @@ export async function POST(request: NextRequest) {
       success: true,
     });
   } catch (error: any) {
-    return NextResponse.json({ success: false, msg: "ERROR" });
+
+    console.log('ERROR >>>',error);
+    
+    return NextResponse.json({ success: false, msg: `ERROR : ${error}` });
   }
 }

@@ -35,7 +35,7 @@ const VerifyPage = () => {
     if (resJson.success) {
       setStatus("Your email has been successfully verified!");
     } else {
-      setStatus("Something went wrong!");
+      setStatus(`Something went wrong!- ${resJson.msg}`);
     }
   };
 
