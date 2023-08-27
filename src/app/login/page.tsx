@@ -18,6 +18,8 @@ const LoginPage = () => {
   const [disSubmitBtn, setDisSubmitBtn] = useState(false);
   const [showPass, setShowPass] = useState(false);
 
+  const [rememberMe, setRememberMe] = useState(false);
+
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -29,7 +31,7 @@ const LoginPage = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ email, password, rememberMe }),
         });
 
         const resJson = await response.json();
@@ -46,6 +48,10 @@ const LoginPage = () => {
     } catch (error: any) {
       toast.error(error);
     }
+  };
+
+  const handleCheckboxChange = () => {
+    setRememberMe(!rememberMe);
   };
 
   return (
@@ -65,7 +71,6 @@ const LoginPage = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-
 
         <div className="input-group">
           <label htmlFor="password">Password</label>
@@ -90,18 +95,33 @@ const LoginPage = () => {
           )}
         </div>
 
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            {" "}
+            <input
+              type="checkbox"
+              id="remember_me"
+              name="remember_me"
+              // value="Bike"
+              className="w-3 mr-1"
+              checked={rememberMe}
+              onChange={handleCheckboxChange}
+            />
+            <label htmlFor="remember_me" className="text-sm">
+              Remember me
+            </label>{" "}
+          </div>
 
-
-
-
-        <div
-          onClick={() => {
-            setShowForgotPassModal(true);
-          }}
-          className="fp-text text-black font-semibold text-sm text-end pb-2 cursor-pointer"
-        >
-          forgot password ?
+          <div
+            onClick={() => {
+              setShowForgotPassModal(true);
+            }}
+            className="fp-text text-black font-semibold text-sm text-end cursor-pointer"
+          >
+            forgot password ?
+          </div>
         </div>
+
         <button
           className="login-button"
           disabled={disSubmitBtn}

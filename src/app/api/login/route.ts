@@ -6,12 +6,12 @@ import jwt from "jsonwebtoken";
 
 import bcrypt from "bcryptjs";
 import { connect } from "@/db/config";
-connect()
+connect();
 export async function POST(request: Request) {
   try {
     const res = await request.json();
 
-    const { email, password } = res || {};
+    const { email, password, rememberMe } = res || {};
 
     const user = await User.findOne({ email });
 
@@ -34,15 +34,21 @@ export async function POST(request: Request) {
 
     const response = NextResponse.json({ success: true, msg: "login done" });
 
-    response.cookies.set("token", token, {
-      httpOnly: true,
-    });
+    if (rememberMe) {
+      response.cookies.set("token", token, {
+        httpOnly: true,
+        expires: Date.now() + 30 * 24 * 60 * 60 * 1000,
+      });
+    } else {
+      response.cookies.set("token", token, {
+        httpOnly: true,
+      });
+    }
 
     return response;
   } catch (error) {
+    console.log("ERROR", error);
 
-    console.log('ERROR', error);
-    
     return NextResponse.json({ success: false, msg: "login failed" });
   }
 }
