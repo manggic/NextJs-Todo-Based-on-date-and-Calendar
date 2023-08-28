@@ -545,12 +545,12 @@ export default function Home() {
           </div>
 
           {todo?.length ? (
-            <div className="text-white">
-              <ul>
+            <div className="text-white mt-3" >
+              <ul className="todo-scroll">
                 {todo.map((t, index) => {
                   return (
                     <li
-                      className="px-7 my-3 flex items-center relative"
+                      className="pl-7 mb-3 flex items-center relative"
                       key={t.name}
                     >
                       {showTooltipOn == t.name ? (
@@ -608,17 +608,17 @@ export default function Home() {
                         currentDate.year,
                       ]) ? (
                         <button
-                          className="ml-3 bg-orange-200	 cursor-pointer rounded-lg p-1 text-xs border border-purple-400 text-black"
+                          className={`ml-3 ${t.status?'bg-green-400' :"bg-red-300"} font-semibold cursor-pointer rounded-lg py-1 px-2 text-xs   text-black`}
                           onClick={() => updateTodoStatus(t)}
                         >
-                          {!t.status ? "Not Done" : "Done"}
+                          {!t.status ? "NOT DONE" : "DONE"}
                         </button>
                       ) : (
                         <span
-                          className="ml-3 bg-orange-200	 p-1 rounded-lg text-xs border border-purple-400 text-black"
+                          className=   {`ml-3 ${t.status?'bg-green-400' :"bg-orange-200"} font-semibold	py-1 px-2 rounded-lg text-xs border  text-black`}
                           // onClick={()=>updateTodoStatus(t)}
                         >
-                          {!t.status ? "Not Done" : "Done"}
+                          {!t.status ? "NOT DONE" : "DONE"}
                         </span>
                       )}
                     </li>
@@ -661,9 +661,9 @@ export default function Home() {
               "h-16 w-1/4 border flex justify-center items-center cursor-pointer";
 
             if (day == currentDate.day && selectedMonth == currentDate.month) {
-              classname += " bg-blue-600";
+              classname += " highlight_current_date";
             } else if (day == selectedDay) {
-              classname += " bg-rose-400";
+              classname += " highlight_selected_date";
             } else if (tasks?.length) {
               classname += " text-pink-300	drop-shadow-2xl text-xl ";
             } else {
@@ -672,6 +672,7 @@ export default function Home() {
             return (
               <div
                 className={classname}
+                // style={{background:"#1f2f1f"}}
                 onClick={() => handleDateClick(day)}
                 key={index}
               >
