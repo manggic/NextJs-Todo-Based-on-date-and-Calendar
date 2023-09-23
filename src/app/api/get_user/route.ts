@@ -1,29 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { cookies } from 'next/headers'
+import { cookies } from "next/headers";
 
 import User from "@/models/UserModel";
 import { connect } from "@/db/config";
 
-connect();
+export const dynamic = "force-dynamic";
 
-export const dynamic = 'force-dynamic'
-
-export async function GET(request:NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     // const cookieStore = cookies()
     // const token = cookieStore.get('token')?.value
-    const token = request.cookies.get("token")?.value;
-    
 
-    console.log('token ???', token);
-    
+    await connect();
+
+    const token = request.cookies.get("token")?.value;
+
     if (!token) {
       return NextResponse.json({
         success: false,
         msg: `token is not available`,
-        reqCookiesLog:request.cookies.get("token")
+        reqCookiesLog: request.cookies.get("token"),
       });
     }
 
@@ -45,6 +43,6 @@ export async function GET(request:NextRequest) {
   } catch (error) {
     console.log({ error });
 
-    return NextResponse.json({ success: false, msg: `ERROR ${error}` });
+    return NextResponse.json({ success: false, msg: `${error}` });
   }
 }

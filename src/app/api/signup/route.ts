@@ -12,6 +12,7 @@ connect();
 function generateDefaultCalendarData() {
   const calendarData = [];
 
+  // month list
   const months = [
     "january",
     "february",
@@ -27,14 +28,20 @@ function generateDefaultCalendarData() {
     "december",
   ];
 
+  // get current year (2023)
   const currentYear = new Date().getFullYear();
 
+  // looping through month
   for (const month of months) {
+    // get days in a month
     const daysInMonth = new Date(
       currentYear,
       months.indexOf(month) + 1,
       0
     ).getDate();
+
+    // creating obj for single month with name and dates property
+    // { name:"january", dates: [ { day:1, tasks:[] }, { day:2, tasks:[] }]  }
     const monthData = {
       name: month,
       dates: Array.from({ length: daysInMonth }, (_, index) => ({
@@ -52,6 +59,14 @@ export async function POST(request: NextRequest) {
   try {
     // fetch name, email and password from POST request
     const { name, email, password } = await request.json();
+
+    // check's if all required data is provided or not
+    if (!(name && email && password)) {
+      return NextResponse.json({
+        success: false,
+        msg: "Pls provide all the required fields",
+      });
+    }
 
     // checking if user already present or not
     const user = await User.findOne({ email });
@@ -89,7 +104,7 @@ export async function POST(request: NextRequest) {
       msg: "sign up done",
       data: savedUser,
       sendEmailResponse: sendEmailResp.data,
-      timeAddingVerifyTokenInDB: sendEmailResp.currentTime
+      timeAddingVerifyTokenInDB: sendEmailResp.currentTime,
     });
   } catch (error) {
     console.log("error", error);

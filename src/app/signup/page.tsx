@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import "./SignUp.css"; // You can create a CSS file for styling
 import toast, { Toaster } from "react-hot-toast";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { useRouter } from "next/navigation";
@@ -10,7 +9,7 @@ const SignUpPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [disSubmitBtn, setDisSubmitBtn] = useState(false);
+  const [disableSubmitBtn, setDisableSubmitBtn] = useState(false);
 
   const [showPass, setShowPass] = useState(false);
 
@@ -21,7 +20,7 @@ const SignUpPage = () => {
       // Add your sign-up logic here
 
       if (email && name && password) {
-        setDisSubmitBtn(true);
+        setDisableSubmitBtn(true);
 
         const response = await fetch("api/signup", {
           method: "POST",
@@ -42,7 +41,7 @@ const SignUpPage = () => {
             router.push("/login");
           }, 2000);
         }
-        setDisSubmitBtn(false);
+        setDisableSubmitBtn(false);
       } else {
         toast.error("Please enter all the details");
       }
@@ -52,11 +51,11 @@ const SignUpPage = () => {
   };
 
   return (
-    <div className="signup-container">
+    <div className="form-container">
       <Toaster />
-      <div className="signup-box">
-        <h2 className="text-center signup-heading">TODO MANAGER</h2>
-        <div className="input-group">
+      <div className="form-box shadow-lg drop-shadow-3xl">
+        <h2 className="form-heading">SIGN UP</h2>
+        <div className="form-input-group">
           <label htmlFor="email">Name</label>
           <input
             type="text"
@@ -65,7 +64,7 @@ const SignUpPage = () => {
             onChange={(e) => setName(e.target.value)}
           />
         </div>
-        <div className="input-group">
+        <div className="form-input-group">
           <label htmlFor="email">Email</label>
           <input
             type="email"
@@ -75,7 +74,7 @@ const SignUpPage = () => {
           />
         </div>
 
-        <div className="input-group">
+        <div className="form-input-group">
           <label htmlFor="password">Password</label>
           <input
             type={showPass ? "text" : "password"}
@@ -97,19 +96,19 @@ const SignUpPage = () => {
             ""
           )}
         </div>
-        <div className="text-sm text-center font-semibold py-2">
+        <div className="text-sm text-center font-semibold pb-3 pt-1">
           Already registered ?{" "}
-          <a className="text-amber-900" href="/login">
+          <a className="text-[#1d7f7f]" href="/login">
             Login here
           </a>{" "}
         </div>
 
         <button
-          className="signup-button"
+          className="submit-button"
           onClick={handleSignUp}
-          disabled={disSubmitBtn}
+          disabled={disableSubmitBtn}
         >
-          Sign Up
+         SUBMIT
         </button>
       </div>
     </div>

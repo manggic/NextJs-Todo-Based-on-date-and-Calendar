@@ -1,298 +1,100 @@
-bugs
 
-1. get_json_data getting called twice
 
-### User Schema
+###  Sign Up <b>(FE)</b> - /signup  
 
+1) It require name,email and password.
+2) Providing this data, when user clicks submit button.
+3) It goes to handleSignUp function <br>
+    - if all three required value is provided
+         * disable submit button
+         * call fetch API /api/signup with method POST, Content_Type as application/json and body.
+         * if response has success true, we will show success msg else we will show error msg  
+         * after 2 sec we will redirect to login page (/login)
+    - if all required field is not provided we will show a msg saying pls enter all the required details.      
+
+
+
+###  Sign Up <b>(BE)</b> - /api/signup
+
+1) collect front-end data from response.json()
+2) if name email and password is not provided return success false with appropriate msg
+3) checks if email already exist or not, if exist return success false with appropriate msg 
+4) generation of calendar with default value, it will be like
 ```javascript
-const mongoose = require("mongoose");
 
-const taskSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  status: {
-    type: Number,
-    required: true,
-  },
-});
+[{ name:"january", dates:[ { day: 1, tasks:[]  }, {day: 2, tasks:[] }, .... ]  }]
 
-const dateSchema = new mongoose.Schema({
-  day: {
-    type: Number,
-    required: true,
-  },
-  tasks: [taskSchema],
-});
+To get current year
+const year = new Date().getFullYear()
 
-const monthSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  dates: [dateSchema],
-});
 
-const yearSchema = new mongoose.Schema({
-  year: {
-    type: String,
-    required: true,
-  },
-  months: [monthSchema],
-});
-
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  calendar: [yearSchema],
-});
-
-const User = mongoose.model("User", userSchema);
-
-module.exports = User;
-```
-
-### Final data(user) in DB will be like
-
-```javascript
-{
-  name: "rajeev",
-  email: "rajeev@gmail.com",
-  password: "someString",
-  calendar: [
-    {
-      year: "2023",
-      months: [
-        {
-          name: "january",
-          dates: [
-            {
-              day: 1,
-              tasks: [
-                {
-                  name: "",
-                  status: "",
-                },
-              ],
-            },
-            // Other dates in January...
-          ],
-        },
-        // Other months in 2023...
-      ],
-    },
-    // Other years...
-  ],
-}
+To get days in month // 2023 is year, 3 is march month 
+const daysInMonth = new Date(2023, 3, 0).getDate()
 
 ```
-
-### CRUD operations
-
-```javascript
-const user = await User.findById(userId);
-const yearIndex = user.calendar.findIndex((year) => year.year === "2023");
-const monthIndex = user.calendar[yearIndex].months.findIndex(
-  (month) => month.name === "January"
-);
-const dateIndex = user.calendar[yearIndex].months[monthIndex].dates.findIndex(
-  (date) => date.day === 1
-);
-
-const taskIndex = user.calendar[yearIndex].months[monthIndex].dates[
-  dateIndex
-].tasks.findIndex((task) => task.name === "breakfast");
-
-if (taskIndex !== -1) {
-  user.calendar[yearIndex].months[monthIndex].dates[dateIndex].tasks[
-    taskIndex
-  ].status = 1;
-  await user.save();
-}
-```
+5) we will hash our password using bcrypt
+6) Save our data into DB with name, email, hashed password and calendar
+7) verification of email :
+   - generate a token using bcryptjs providing email
+   - save token in DB with an expiry date
+   - send email using nodemailer to the user with a link and token in query string like <http://localhost:3000/verifyemail?token=12345>
+   - when user click this link it will re-direct him to our page.
+   - we fetch token from URL and then call fetch API /api/verifyemail/
+   - Inside api, we will query DB based on token and expiry,
+     if we didn't get user, we return with success false, else we set isVerified as true and token and expiry value to undefined in DB
 
 
+### Login - /login 
 
-### sign up code for adding default data
-```javascript
-const express = require('express');
-const router = express.Router();
-const User = require('./models/user'); // Your User model
+1) Same as Sign up functionality only diff is this require only 2 field email and password and remember me is optional.
+   - we call fetch API /api/login
+   - Query DB based on email, if user doesn't exist,we return.
+   - if exist we compare password with DB password using bcrypt.compare
+   - we generate token using jwt providing email to it.
+   - we set userToken and expiry in DB based on remember me condition.
+   - we set the cookies with an expiry.
 
-router.post('/signup', async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-
-    // Create the user account
-    const newUser = await User.create({ name, email, password });
-
-    // Generate default calendar data
-    const defaultCalendarData = generateDefaultCalendarData();
-
-    // Update the user with the default calendar data
-    await User.findByIdAndUpdate(newUser._id, { calendar: defaultCalendarData });
-
-    res.status(201).json({ message: 'User registered successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'An error occurred' });
-  }
-});
-
-// Function to generate default calendar data for all months
-function generateDefaultCalendarData() {
-  const calendarData = [];
-
-  const months = [
-    'january', 'february', 'march', 'april', 'may', 'june',
-    'july', 'august', 'september', 'october', 'november', 'december'
-  ];
-
-  const currentYear = new Date().getFullYear();
-
-  for (const month of months) {
-    const daysInMonth = new Date(currentYear, months.indexOf(month) + 1, 0).getDate();
-    const monthData = {
-      name: month,
-      dates: Array.from({ length: daysInMonth }, (_, index) => ({ day: index + 1, tasks: [] }))
-    };
-    calendarData.push(monthData);
-  }
-
-  return [{ year: currentYear.toString(), months: calendarData }];
-}
-
-module.exports = router;
-
-```
+2) It has forgot password functionality
+    - when user click on forgot password, a modal will open which will ask user to provide email.
+    - After clicking submit button, handleSubmit function will check if email is provided or not.
+    - After checking it will call fetch API /api/forgotpasswordemail
+    - Inside api, we will check for email,
+    query DB based on email, if user does not exist will send appropriate msg
+    - Then we will check if user is verified or not.
+    - we set forgot password token in DB with expiry date
+    - we send an email, with link along with token in query string
+    - Link will redirect to our page,it will ask user to provide new password and confirm the same.
+    - on submit, fetch API /api/forgotpassword is called
+    - Inside api, we check if password n confirm password is same.
+    - we query DB based on token, if user does not exist we throw msg token is invalid
+    - if user is present we hashed provided password, set user db password to hashed password, 
+    set forgot password and forgot password token to undefined. 
+3) remember me functionality
+    - 
 
 
 
-### update a task 
-```javascript
-const userEmail = "rajeev@gmail.com";
-const targetDate = new Date("2023-02-14"); // Specify the target date
-
-// Find the user document by email
-const user = db.users.findOne({ email: userEmail });
-
-if (user) {
-  // Find the index of the target date within the "dates" array
-  const targetDateIndex = user.calendar.months.dates.findIndex(date => date.day === targetDate.getDate());
-
-  if (targetDateIndex !== -1) {
-    // Update the task for the specified date
-    user.calendar.months.dates[targetDateIndex].tasks.push({
-      name: "New Task",
-      status: "pending"
-    });
-
-    // Update the user document with the modified calendar data
-    db.users.updateOne({ email: userEmail }, { $set: { calendar: user.calendar } });
-
-    print("Task added successfully!");
-  } else {
-    print("Target date not found.");
-  }
-} else {
-  print("User not found.");
-}
-
-```
-
-### update a task using shell
-
-```javascript
-db.users.findOneAndUpdate(
-  {
-    email: "m@m.com"
-  },
-  {
-    $push: {
-      "calendar.$[year].months.$[month].dates.$[date].tasks": {
-        name: "New Task",
-        status: "pending"
-      }
-    }
-  },
-  {
-    arrayFilters: [
-      { "year.year": "2023" },
-      { "month.name": "february" },
-      { "date.day": 14 }
-    ],
-    new: true
-  }
-);
-
-```
 
 
-## edit a todo code 
 
-```javascript
-import { NextRequest, NextResponse } from "@next/server"; // Make sure this is the correct import path
-import User from '@/models/UserModel';
 
-export async function PUT(request: NextRequest) {
-  try {
-    const { year, month, day, taskName, updatedTask, email } = await request.json();
 
-    const user = await User.findOne({ email });
 
-    if (user) {
-      const updatedUser = await User.findOneAndUpdate(
-        {
-          email
-        },
-        {
-          $set: {
-            'calendar.$[year].months.$[month].dates.$[date].tasks.$[task].name': updatedTask.name,
-            'calendar.$[year].months.$[month].dates.$[date].tasks.$[task].status': updatedTask.status
-          }
-        },
-        {
-          arrayFilters: [
-            { 'year.year': year },
-            { 'month.name': month },
-            { 'date.day': day },
-            { 'task.name': taskName }
-          ],
-          new: true
-        }
-      );
 
-      return NextResponse.json({
-        success: true,
-        msg: "Todo updated successfully",
-        data: updatedUser
-      });
-    } else {
-      return NextResponse.json({ success: false, msg: "User not found" });
-    }
-  } catch (error) {
-    console.error('ERROR', error);
-    return NextResponse.json({ success: false });
-  }
-}
 
-```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -346,6 +148,10 @@ This command will output the contents of the .bson file in a human-readable form
 * todo
 
 2) addtodo pop-up position is not proper
+
+
+
+
 
 
 

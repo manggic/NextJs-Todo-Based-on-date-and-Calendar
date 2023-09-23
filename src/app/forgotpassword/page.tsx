@@ -47,10 +47,14 @@ const ForgotPasswordPage = () => {
   };
 
   return (
-    <div className="fg-container flex flex-col justify-center items-center min-h-screen">
+    <div className="form-container">
       <Toaster />
+
+      <div className="form-box">
+      <h2 className="form-heading">Forgot Password</h2>
+
       <input
-        className="text-black w-3/12 m-5"
+        className="text-black outline-[#2f363b]"
         type="password"
         name="password"
         id="password"
@@ -58,7 +62,7 @@ const ForgotPasswordPage = () => {
         onChange={(e) => setPassword(e.target.value)}
       />
       <input
-        className="text-black w-3/12 m-5"
+        className="text-black outline-[#2f363b]"
         type="password"
         name="confirmpassword"
         id="confirmpassword"
@@ -66,9 +70,11 @@ const ForgotPasswordPage = () => {
         onChange={(e) => setConfirmPassword(e.target.value)}
       />
 
-      <button onClick={handleSubmit} className="submit-btn mt-5 w-3/12">
+      <button onClick={handleSubmit} className="submit-button mt-5 w-3/12">
         Submit
       </button>
+      </div>
+    
     </div>
   );
 };

@@ -16,6 +16,11 @@ const ForgotPassModal = ({ setShowForgotPassModal }) => {
     // toast.success("check your email");
 
     try {
+      if (!email) {
+        toast.error("pls provide email");
+        return;
+      }
+
       const res = await fetch("/api/forgotpasswordemail", {
         method: "POST",
         headers: {
@@ -51,7 +56,7 @@ const ForgotPassModal = ({ setShowForgotPassModal }) => {
         >
           &times;
         </span>
-        <p className="text-sm">Enter your email to reset your password</p>
+        <p className="text-lg font-semibold text-center capitalize">Reset password</p>
         <form onSubmit={handleSubmit}>
           <input
             type="email"
@@ -59,29 +64,11 @@ const ForgotPassModal = ({ setShowForgotPassModal }) => {
             value={email}
             onChange={handleEmailChange}
           />
-          <button className="submit-btn" type="submit">
+          <button className="submit-button" type="submit">
             Submit
           </button>
         </form>
       </div>
-      <style jsx global>
-        {`
-          .submit-btn {
-            display: block;
-            width: 100%;
-            background-color: steelblue;
-            color: #fff;
-            border: none;
-            padding: 10px;
-            border-radius: 3px;
-            cursor: pointer;
-          }
-
-          .submit-btn:hover {
-            background-color: #575b5f;
-          }
-        `}
-      </style>
     </div>
   );
 };

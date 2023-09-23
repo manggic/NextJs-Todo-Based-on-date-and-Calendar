@@ -28,10 +28,14 @@ export async function POST(request: Request) {
       });
     }
 
-    const token = await jwt.sign({ email }, "thisismytoken", {
-      expiresIn: "1d",
-    });
+    const token = await jwt.sign({ email }, "thisismytoken");
 
+    user.userToken = token;
+    user.userTokenExpiry = rememberMe
+      ? Date.now() + 30 * 24 * 60 * 60 * 1000 // 30 days
+      : Date.now() + 60 * 60 * 1000; // 1 hour
+
+    await user.save();
     const response = NextResponse.json({ success: true, msg: "login done" });
 
     if (rememberMe) {
@@ -49,6 +53,11 @@ export async function POST(request: Request) {
   } catch (error) {
     console.log("ERROR", error);
 
-    return NextResponse.json({ success: false, msg: "login failed" });
+    const response = NextResponse.json({ success: false, msg: "login failed" })
+
+    response.cookies.delete('token')
+
+    return response;
+    
   }
 }

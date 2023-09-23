@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Toaster, toast } from "react-hot-toast";
 import { AiFillCloseCircle } from "react-icons/ai";
 
 const Modal = ({
@@ -16,7 +17,7 @@ const Modal = ({
     } else if (modalTodo) {
       addTodo(modalTodo);
     } else {
-      setModalTodo(false);
+      toast.error("Pls enter todo");
     }
   }
 
@@ -29,30 +30,37 @@ const Modal = ({
   };
 
   return (
-    <div className="h-52 bg-gray-50 py-20 px-4" style={{ width: "350px" }}>
-      <div
-        onClick={() => closePopup()}
-        className="absolute right-3 top-3 text-black text-lg cursor-pointer"
-      >
-        <AiFillCloseCircle />
-      </div>
-      <div className="text-black">Enter todo</div>
+    <div
+      className="bg-[#f7f7f7] pt-8 pb-5 px-4"
+      style={{ width: "350px", backdropFilter: blur("5px") }}
+    >
+      <Toaster />
+      <div className="text-black text-sm">Enter todo</div>
 
       <div className="flex items-center">
         <input
-          className="px-1 py-1 text-black border border-black"
+          className="px-1 py-1 text-black border border-black outline-[#2f363b]"
           type="text"
           name="todo"
           id="todo"
           value={modalTodo}
           onChange={(e) => setModalTodo(e.target.value)}
         />
+      </div>
+      <div className="flex justify-end mt-4">
         <button
           onClick={() => handleSubmit()}
-          className="ml-2 border p-1 text-white-200 bg-gray-500"
+          className="ml-2 text-sm border px-4 py-2 text-white-200 bg-[#2f363b]  rounded-md"
           type="submit"
         >
-          submit
+          Submit
+        </button>
+        <button
+          onClick={() => closePopup()}
+          className="ml-2 text-sm border py-2 px-4 text-white-200 bg-[#2f363b]  rounded-md"
+          type="submit"
+        >
+          Close
         </button>
       </div>
     </div>

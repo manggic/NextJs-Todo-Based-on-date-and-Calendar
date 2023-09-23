@@ -8,6 +8,10 @@ export async function POST(request: NextRequest) {
   try {
     const { email } = await request.json();
 
+    if(!email){
+      return NextResponse.json({ success: false, msg: 'pls provide email' })
+    }
+
     const user = await User.findOne({ email });
     if (!user) {
       return NextResponse.json({

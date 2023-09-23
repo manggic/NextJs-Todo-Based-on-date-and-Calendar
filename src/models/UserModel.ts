@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
-
 const taskSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -40,13 +39,13 @@ const userSchema = new Schema({
   name: {
     type: String,
     required: true,
-    trim:true
+    trim: true,
   },
   email: {
     type: String,
     required: true,
     unique: true,
-    trim: true 
+    trim: true,
   },
   password: {
     type: String,
@@ -55,7 +54,7 @@ const userSchema = new Schema({
   isVerified: {
     type: Boolean,
     default: false,
-},
+  },
   forgotPasswordToken: String,
   forgotPasswordTokenExpiry: Date,
   verifyToken: String,
@@ -65,9 +64,10 @@ const userSchema = new Schema({
     default: Date.now,
   },
   calendar: [yearSchema],
+  userToken: String,
+  userTokenExpiry: Date,
 });
 
-const User = mongoose.models.User || mongoose.model("User", userSchema);
+const User = mongoose?.models?.User || mongoose.model("User", userSchema);
 
 export default User;
-

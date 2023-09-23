@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import "./Login.css"; // You can create a CSS file for styling
 import toast, { Toaster } from "react-hot-toast";
 
 import { useRouter } from "next/navigation";
@@ -15,7 +14,7 @@ const LoginPage = () => {
 
   const [showForgotPassModal, setShowForgotPassModal] = useState(false);
 
-  const [disSubmitBtn, setDisSubmitBtn] = useState(false);
+  const [disableSubmitBtn, setDisableSubmitBtn] = useState(false);
   const [showPass, setShowPass] = useState(false);
 
   const [rememberMe, setRememberMe] = useState(false);
@@ -25,8 +24,8 @@ const LoginPage = () => {
   const handleLogin = async () => {
     try {
       if (email && password) {
-        setDisSubmitBtn(true);
-        const response = await fetch("api/login", {
+        setDisableSubmitBtn(true);
+        const response = await fetch("/api/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -41,7 +40,7 @@ const LoginPage = () => {
         } else {
           router.push("/");
         }
-        setDisSubmitBtn(false);
+        setDisableSubmitBtn(false);
       } else {
         toast.error("Please enter all the details");
       }
@@ -55,14 +54,14 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="login-container">
+    <div className="form-container">
       {showForgotPassModal && (
         <ForgotPassModal setShowForgotPassModal={setShowForgotPassModal} />
       )}
       <Toaster />
-      <div className="login-box">
-        <h2 className="text-center login-heading">TODO MANAGER</h2>
-        <div className="input-group">
+      <div className="form-box">
+        <h2 className="form-heading">LOGIN</h2>
+        <div className="form-input-group">
           <label htmlFor="email">Email</label>
           <input
             type="email"
@@ -72,7 +71,7 @@ const LoginPage = () => {
           />
         </div>
 
-        <div className="input-group">
+        <div className="form-input-group">
           <label htmlFor="password">Password</label>
           <input
             type={showPass ? "text" : "password"}
@@ -95,7 +94,7 @@ const LoginPage = () => {
           )}
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-1">
           <div className="flex items-center">
             {" "}
             <input
@@ -107,7 +106,7 @@ const LoginPage = () => {
               checked={rememberMe}
               onChange={handleCheckboxChange}
             />
-            <label htmlFor="remember_me" className="text-sm">
+            <label htmlFor="remember_me" className="text-sm text-[#3c384dc4]">
               Remember me
             </label>{" "}
           </div>
@@ -116,22 +115,22 @@ const LoginPage = () => {
             onClick={() => {
               setShowForgotPassModal(true);
             }}
-            className="fp-text text-black font-semibold text-sm text-end cursor-pointer"
+            className="text-[#3c384dc4] text-sm text-end cursor-pointer"
           >
             forgot password ?
           </div>
         </div>
 
         <button
-          className="login-button"
-          disabled={disSubmitBtn}
+          className="submit-button"
+          disabled={disableSubmitBtn}
           onClick={handleLogin}
         >
-          Log In
+         SUBMIT
         </button>
-        <div className="text-sm text-center font-semibold py-2">
+        <div className="text-sm text-center font-semibold pt-4">
           Not a member ?{" "}
-          <a className="text-amber-900" href="/signup">
+          <a className="text-[#1d7f7f]" href="/signup">
             Register here
           </a>{" "}
         </div>

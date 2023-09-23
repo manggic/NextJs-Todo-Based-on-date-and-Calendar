@@ -73,10 +73,6 @@ ul li {
   width: 75px;
 }
 
-.main {
-  background-color: #36454f;
-}
-
 /* forgot password modal css */
 
 /* Modal styles */
@@ -144,22 +140,6 @@ input {
   margin-right: 20px;
 }
 
-/* button {
-  background-color: #007bff !important;
-  color: white;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-} */
-
-/* button:hover {
-  background-color: #0056b3;
-} */
-
-/* You can add more styling as needed */
-
-/* Example of WebKit-specific scrollbar styling */
 ::-webkit-scrollbar {
   width: 7px;
 }
@@ -172,4 +152,74 @@ input {
 ::-webkit-scrollbar-thumb {
   background-color: #e8e1e1;
   border-radius: 20px;
+}
+
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #2f363b;
+}
+
+.password-eye {
+  position: absolute;
+  font-size: 20px;
+  top: 64%;
+  right: 15px;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.submit-button {
+  display: block;
+  width: 100%;
+  background-color: #2f363b;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.form-heading {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #2f363b;
+  margin-bottom: 20px;
+  text-align: center;
+  transition: color 0.3s ease-in-out;
+}
+
+.form-box {
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 5px;
+  width: 400px;
+  background-color: #f7f7f7;
+  color: #000;
+}
+
+.submit-button:hover {
+  background-color: #575b5f;
+}
+
+.form-input-group {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.form-input-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 15px;
+}
+
+.form-input-group input {
+  outline-color: #2f363b;
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
 }
