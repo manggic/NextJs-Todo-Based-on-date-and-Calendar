@@ -63,6 +63,7 @@ const ForgotPassModal = ({ setShowForgotPassModal }) => {
             placeholder="Enter your email"
             value={email}
             onChange={handleEmailChange}
+            className="mb-3"
           />
           <button className="submit-button" type="submit">
             Submit

@@ -76,27 +76,31 @@ const SignUpPage = () => {
 
         <div className="form-input-group">
           <label htmlFor="password">Password</label>
-          <input
-            type={showPass ? "text" : "password"}
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          {password ? (
-            <div
-              className="password-eye"
-              onClick={() => {
-                setShowPass(!showPass);
-              }}
-            >
-              {" "}
-              {showPass ? <AiFillEye /> : <AiFillEyeInvisible />}{" "}
-            </div>
-          ) : (
-            ""
-          )}
+
+          <div className="flex items-center relative">
+            <input
+              type={showPass ? "text" : "password"}
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="password-input"
+            />
+            {password ? (
+              <div
+                className="password-eye"
+                onClick={() => {
+                  setShowPass(!showPass);
+                }}
+              >
+                {" "}
+                {showPass ? <AiFillEye /> : <AiFillEyeInvisible />}{" "}
+              </div>
+            ) : (
+              ""
+            )}
+          </div>
         </div>
-        <div className="text-sm text-center font-semibold pb-3 pt-1">
+        <div className="text-sm text-center font-semibold pb-3 pt-3">
           Already registered ?{" "}
           <a className="text-[#1d7f7f]" href="/login">
             Login here
@@ -108,7 +112,7 @@ const SignUpPage = () => {
           onClick={handleSignUp}
           disabled={disableSubmitBtn}
         >
-         SUBMIT
+          SUBMIT
         </button>
       </div>
     </div>

@@ -6,7 +6,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
-import ForgotPassModal from "../components/forgotPassModal";
+import ForgotPassModal from "../components/ForgotPassModal";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -73,28 +73,32 @@ const LoginPage = () => {
 
         <div className="form-input-group">
           <label htmlFor="password">Password</label>
-          <input
-            type={showPass ? "text" : "password"}
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          {password ? (
-            <div
-              className="password-eye"
-              onClick={() => {
-                setShowPass(!showPass);
-              }}
-            >
-              {" "}
-              {showPass ? <AiFillEye /> : <AiFillEyeInvisible />}{" "}
-            </div>
-          ) : (
-            ""
-          )}
+
+          <div className="flex items-center relative">
+            <input
+              type={showPass ? "text" : "password"}
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="password-input"
+            />
+            {password ? (
+              <div
+                className="password-eye"
+                onClick={() => {
+                  setShowPass(!showPass);
+                }}
+              >
+                {" "}
+                {showPass ? <AiFillEye /> : <AiFillEyeInvisible />}{" "}
+              </div>
+            ) : (
+              ""
+            )}
+          </div>
         </div>
 
-        <div className="flex items-center justify-between mb-1">
+        <div className="flex items-center justify-between mb-1 mt-8 mb-3">
           <div className="flex items-center">
             {" "}
             <input
@@ -126,7 +130,7 @@ const LoginPage = () => {
           disabled={disableSubmitBtn}
           onClick={handleLogin}
         >
-         SUBMIT
+          SUBMIT
         </button>
         <div className="text-sm text-center font-semibold pt-4">
           Not a member ?{" "}
