@@ -5,8 +5,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 import { useRouter } from "next/navigation";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-
-import ForgotPassModal from "../components/ForgotPassModal";
+import { ForgotPassModal } from "../components";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
