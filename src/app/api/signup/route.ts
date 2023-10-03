@@ -97,7 +97,6 @@ export async function POST(request: NextRequest) {
       emailType: "VERIFY",
       userId: savedUser._id,
     });
-    console.log("sendEmailResp ????", sendEmailResp);
 
     return NextResponse.json({
       success: true,

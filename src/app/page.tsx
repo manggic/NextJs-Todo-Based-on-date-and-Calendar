@@ -170,8 +170,6 @@ export default function Home() {
   }, [selectedMonth]);
 
   function addTodoInSelectedDate() {
-    console.log("hello");
-
     setShowModal(true);
   }
 

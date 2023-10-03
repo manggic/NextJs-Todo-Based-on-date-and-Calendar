@@ -19,8 +19,6 @@ const {
   DOMAIN,
 } = process.env;
 
-console.log(HOST, PORT_NO, USER_EMAIL, USER_PASS, DOMAIN);
-
 type inputParams = {
   email: string;
   emailType: string;
@@ -29,8 +27,6 @@ type inputParams = {
 
 export const sendEmail = async ({ email, emailType, userId }: inputParams) => {
   try {
-    console.log(email, emailType, userId);
-
     const hashedToken = await bcryptjs.hash(email, 10);
 
     if (emailType === "VERIFY") {
@@ -38,8 +34,6 @@ export const sendEmail = async ({ email, emailType, userId }: inputParams) => {
         verifyToken: hashedToken,
         verifyTokenExpiry: Date.now() + 3600000,
       });
-
-      console.log('Date.now() + 3600000', Date.now() + 3600000);
       
     } else if (emailType === "RESET") {
       await User.findOneAndUpdate(
