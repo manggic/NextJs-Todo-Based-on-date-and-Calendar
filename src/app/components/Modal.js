@@ -11,7 +11,9 @@ const Modal = ({
 }) => {
   const [modalTodo, setModalTodo] = useState(editTodoInfo?.todo?.name || "");
 
-  function handleSubmit() {
+  function handleSubmit(e) {
+    e.preventDefault()
+
     if (editTodoInfo?.todo?.name) {
       editTodo({ name: modalTodo, status: editTodoInfo.todo.status });
     } else if (modalTodo) {
@@ -31,7 +33,8 @@ const Modal = ({
 
   return (
     <div className="fixed w-full h-screen	flex justify-center items-center z-20 backdrop-blur-lg">
-      <div
+      <form
+        onSubmit={(e)=>handleSubmit(e)}
         className="bg-[#f7f7f7] pt-8 pb-5 px-4 rounded"
         style={{ width: "350px", backdropFilter: blur("5px") }}
       >
@@ -50,7 +53,7 @@ const Modal = ({
         </div>
         <div className="flex justify-end mt-4">
           <button
-            onClick={() => handleSubmit()}
+            // onClick={() => handleSubmit()}
             className="ml-2 text-sm border px-4 py-2 text-white-200 bg-[#2f363b]  rounded-md"
             type="submit"
           >
@@ -64,7 +67,7 @@ const Modal = ({
             Close
           </button>
         </div>
-      </div>
+      </form>
      </div> 
   );
 };

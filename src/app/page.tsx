@@ -27,7 +27,7 @@ export default function Home() {
   const [showModal, setShowModal] = useState<boolean>(false);
 
   // single todo to show on lhs
-  const [todo, setTodo] = useState<any[]>([]);
+  const [lhsTodo, setLhsTodo] = useState<any[]>([]);
 
   // current date
   const [currentDate, setCurrentDate] = useState({
@@ -39,7 +39,7 @@ export default function Home() {
   // month selected
   const [selectedMonth, setSelectedMonth] = useState<string>("");
 
-  const [selectedDay, setSelectedDay] = useState<null | number>(null);
+  const [selectedDay, setSelectedDay] = useState<null | string>(null);
 
   const [showTooltipOn, setShowTooltipOn] = useState<string>("");
 
@@ -80,7 +80,7 @@ export default function Home() {
 
     setSelectedMonth(currentMonth);
 
-    setSelectedDay(currentDay);
+    setSelectedDay(currentDay.toString());
     setCurrentDate({
       day: currentDay.toString(),
       month: currentMonth.toString(),
@@ -122,13 +122,13 @@ export default function Home() {
       }
     });
 
-    setTodo(todo);
+    setLhsTodo(todo);
   }
 
   const handleSelectChange = (event: any) => {
     setSelectedMonth(event.target.value);
 
-    setSelectedDay(1);
+    setSelectedDay("1");
 
     settingTodosData(currentUser, event.target.value);
 
@@ -175,12 +175,20 @@ export default function Home() {
 
   function handleDateClick(ele: any) {
     setSelectedDay(ele);
-
     settingLhsTodo(currentUser, selectedMonth, ele);
   }
 
+  const checkIfTodoAlreadyPresent = (todo: string): boolean => {
+    const value = lhsTodo.find((ele) => ele.name === todo);
+    return value ? true : false;
+  };
+
   async function addTodo(todo: any) {
     try {
+      if (checkIfTodoAlreadyPresent(todo)) {
+        toast.error(`${todo} already present`);
+        return;
+      }
       let fetchData = await fetch("/api/add_todo", {
         method: "POST",
         headers: {
@@ -292,6 +300,13 @@ export default function Home() {
     settingLhsTodo(resJson.data, selectedMonth, selectedDay);
   }
 
+  function ifSelectedDateisToday(): boolean {
+    if (currentDate.day == selectedDay && currentDate.month === selectedMonth) {
+      return true;
+    }
+    return false;
+  }
+
   function isSelectedDatePrevoius(date2: any) {
     // today date - date1
     // date1 - [04,august,2023]
@@ -341,6 +356,12 @@ export default function Home() {
   }
 
   async function editTodo(todo: any) {
+
+    if (checkIfTodoAlreadyPresent(todo.name)) {
+      toast.error(`${todo.name} already present`);
+      return;
+    }
+
     const fetchData = await fetch("/api/edit_todo", {
       method: "PUT",
       headers: {
@@ -386,6 +407,11 @@ export default function Home() {
     }
   }
 
+  const openCurrentDate = () => {
+    setSelectedMonth(currentDate.month);
+    setSelectedDay(currentDate.day);
+  };
+
   return (
     <div className="bg-[#2f363b] min-h-screen relative">
       <Toaster />
@@ -402,7 +428,12 @@ export default function Home() {
         ""
       )}
 
-      <Header currentUser={currentUser} currentDate={currentDate} />
+      <Header
+        openCurrentDate={openCurrentDate}
+        currentUser={currentUser}
+        currentDate={currentDate}
+        selectedMonth={selectedMonth}
+      />
 
       <div className="flex mt-5">
         <div className="left w-1/4">
@@ -420,11 +451,12 @@ export default function Home() {
             deleteTodo={deleteTodo}
             updateTodoStatus={updateTodoStatus}
             deleteAllTodo={deleteAllTodo}
-            todo={todo}
+            todo={lhsTodo}
             showTooltipOn={showTooltipOn}
             setShowTooltipOn={setShowTooltipOn}
             handleHover={handleHover}
             handleEdit={handleEdit}
+            ifSelectedDateisToday={ifSelectedDateisToday}
           />
 
           <Logout handleLogout={handleLogout} />

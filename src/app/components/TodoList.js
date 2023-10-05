@@ -19,15 +19,16 @@ const TodoList = ({
   setShowTooltipOn,
   handleHover,
   handleEdit,
+  ifSelectedDateisToday
 }) => {
   return (
     <div className="todos">
       <div className="text-white pt-20 pl-7 font-bold flex items-center">
-        <div>
-          Todos{" "}
+        <div className="bg-black px-2">
+          Todos{" : "}
           <span className="">
             {selectedDay
-              ? `(${selectedDay} ${months[selectedMonth].shortName} ${currentDate.year})`
+              ? `${selectedDay} ${months[selectedMonth].shortName} ${currentDate.year}`
               : ""}
           </span>
         </div>
@@ -118,11 +119,7 @@ const TodoList = ({
                     ""
                   )}
 
-                  {!isSelectedDatePrevoius([
-                    selectedDay,
-                    selectedMonth,
-                    currentDate.year,
-                  ]) ? (
+                  {ifSelectedDateisToday() ? (
                     <button
                       className={`ml-3 ${
                         t.status ? "bg-[aquamarine]" : "bg-orange-200"
