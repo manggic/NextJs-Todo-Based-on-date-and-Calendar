@@ -410,6 +410,7 @@ export default function Home() {
   const openCurrentDate = () => {
     setSelectedMonth(currentDate.month);
     setSelectedDay(currentDate.day);
+    settingLhsTodo(currentUser,currentDate.month, currentDate.day )
   };
 
   return (
