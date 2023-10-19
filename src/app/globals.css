@@ -43,10 +43,12 @@ ul li {
   width: 138px; /* Adjust width as needed */
   text-align: left;
   /* right: 100%; Position to the right of the container */
-  top: 50%;
+  /* top: 50%; */
   left: 40%;
-  transform: translateY(-50%);
+  /* transform: translateY(-50%); */
   margin-right: 10px; /* Add spacing between container and tooltip */
+  /* bottom:0%; */
+  word-wrap: break-word;
 }
 
 .top::after {

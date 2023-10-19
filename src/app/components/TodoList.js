@@ -19,7 +19,7 @@ const TodoList = ({
   setShowTooltipOn,
   handleHover,
   handleEdit,
-  ifSelectedDateisToday
+  ifSelectedDateisToday,
 }) => {
   return (
     <div className="todos">
@@ -72,14 +72,22 @@ const TodoList = ({
                   className="pl-7 mb-3 flex items-center relative"
                   key={t.name}
                 >
-                  {/* {showTooltipOn == t.name ? (
-                    <span className="top z-20">
+                  {showTooltipOn == t.name ? (
+                    <span
+                      className={`${
+                        index === 0
+                          ? "ItsTop"
+                          : index === todo?.length - 1
+                          ? "ItsBottom"
+                          : "ItsCenter"
+                      }   top z-20`}
+                    >
                       {t.name}
                       <i></i>
                     </span>
                   ) : (
                     ""
-                  )} */}
+                  )}
 
                   <span
                     onMouseEnter={() => handleHover(t)}
@@ -146,6 +154,23 @@ const TodoList = ({
       ) : (
         <div className="text-white px-7 my-3">Empty!!!!</div>
       )}
+
+      <style jsx global>
+        {`
+          .ItsTop {
+            top: 0;
+          }
+
+          .ItsBottom {
+            bottom: 0;
+          }
+
+          .ItsCenter {
+            top: 50%;
+            transform: translateY(-50%);
+          }
+        `}
+      </style>
     </div>
   );
 };
