@@ -18,6 +18,8 @@ import {
   DataDropDown,
 } from "./components/index";
 
+import {monthDataType, DynamicTodo, EditTodoInfo} from '../types'
+
 export default function Home() {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<any>({});
@@ -37,11 +39,11 @@ export default function Home() {
   // month selected
   const [selectedMonth, setSelectedMonth] = useState<string>("");
 
-  const [selectedDay, setSelectedDay] = useState<null | string>(null);
+  const [selectedDay, setSelectedDay] = useState<string>('');
 
   const [showTooltipOn, setShowTooltipOn] = useState<string>("");
 
-  const [editTodoInfo, setEditTodoInfo] = useState({
+  const [editTodoInfo, setEditTodoInfo] = useState<EditTodoInfo>({
     index: null,
     todo: null,
   });
@@ -90,7 +92,7 @@ export default function Home() {
     setLhsTodo(settingLhsTodo(currentUser.monthData, event.target.value));
   };
 
-  const settingLhsTodo = (monthData, day, event = null) => {
+  const settingLhsTodo = (monthData:monthDataType, day:string, event = null) => {
     let checker = event ? event : dataToShow;
 
     for (let i = 0; i < monthData?.length; i++) {
@@ -151,7 +153,7 @@ export default function Home() {
     setLhsTodo(settingLhsTodo(currentUser.monthData, ele));
   }
 
-  const checkIfTodoAlreadyPresent = (todo: {}): boolean => {
+  const checkIfTodoAlreadyPresent = (todo: DynamicTodo): boolean => {
     const value = lhsTodo.find((ele) => ele.name === todo.name);
     return value ? true : false;
   };
@@ -331,8 +333,8 @@ export default function Home() {
   }
 
   // done
-  async function editTodo(todo: any) {
-    if (checkIfTodoAlreadyPresent(todo.name)) {
+  async function editTodo(todo: DynamicTodo) {
+    if (checkIfTodoAlreadyPresent(todo)) {
       toast.error(`${todo.name} already present`);
       return;
     }

@@ -33,10 +33,10 @@ export async function DELETE(request: NextRequest) {
         }
       );
 
-      let monthData = [];
-      updatedUser.calendar.map( yearList => {
+      let monthData:[] = [];
+      updatedUser.calendar.map((yearList:any) => {
         if (yearList.year === year) {
-          yearList.months.map((monthList) => {
+          yearList.months.map((monthList:any) => {
             if (monthList.name === month) {
               monthData = monthList.dates;
             }

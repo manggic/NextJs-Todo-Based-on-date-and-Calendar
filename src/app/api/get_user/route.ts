@@ -32,11 +32,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ msg: "User not found OR invalid token" });
     }
 
-    let monthData = [];
+    let monthData:[] = [];
 
-    user.calendar.map((yearList) => {
+    user.calendar.map((yearList:any) => {
       if (yearList.year === year) {
-        yearList.months.map((monthList) => {
+        yearList.months.map((monthList:any) => {
           if (monthList.name === month) {
             monthData = monthList.dates;
           }
