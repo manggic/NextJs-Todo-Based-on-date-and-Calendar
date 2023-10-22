@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { events, checkIfObjectAndHasData } from "@/constant";
+import { useEffect, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import { AiFillCloseCircle } from "react-icons/ai";
 
@@ -8,16 +9,20 @@ const Modal = ({
   editTodoInfo,
   editTodo,
   setEditTodoInfo,
+  dataToShow
 }) => {
   const [modalTodo, setModalTodo] = useState(editTodoInfo?.todo?.name || "");
+
+
+  const [formData, setFormData] = useState(editTodoInfo?.todo||{})
 
   function handleSubmit(e) {
     e.preventDefault()
 
     if (editTodoInfo?.todo?.name) {
-      editTodo({ name: modalTodo, status: editTodoInfo.todo.status });
-    } else if (modalTodo) {
-      addTodo(modalTodo);
+      editTodo(formData);
+    } else if (checkIfObjectAndHasData(formData)) {
+      addTodo(formData);
     } else {
       toast.error("Pls enter todo");
     }
@@ -31,6 +36,14 @@ const Modal = ({
     });
   };
 
+  const handleChange = (e) => {
+       setFormData({  ...formData,  [e.target.name]:e.target.value  })
+  }
+
+  useEffect( () => {
+         console.log(formData);
+  } , [formData])
+
   return (
     <div className="fixed w-full h-screen	flex justify-center items-center z-20 backdrop-blur-lg">
       <form
@@ -39,17 +52,21 @@ const Modal = ({
         style={{ width: "350px", backdropFilter: blur("5px") }}
       >
         <Toaster />
-        <div className="text-black text-md pb-2">Enter todo</div>
+        <div className="text-black text-center text-md pb-2">{dataToShow}</div>
 
-        <div className="flex items-center">
-          <input
-            className="px-1 py-1 text-black border border-black outline-[#2f363b]"
+        <div className="flex flex-col items-center">
+
+         {events[dataToShow].formfields.map(ele => {
+            return <><input
+            className="px-1 py-1 mb-2 text-black border border-black outline-[#2f363b]"
             type="text"
-            name="todo"
-            id="todo"
-            value={modalTodo}
-            onChange={(e) => setModalTodo(e.target.value)}
-          />
+            name={ele}
+            id={ele}
+            placeholder={ele}
+            value={formData?.[ele] || ''}
+            onChange={(e) => handleChange(e)}
+          /></>
+         })}
         </div>
         <div className="flex justify-end mt-4">
           <button

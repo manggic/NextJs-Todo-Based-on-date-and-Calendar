@@ -47,6 +47,7 @@ function generateDefaultCalendarData() {
       dates: Array.from({ length: daysInMonth }, (_, index) => ({
         day: index + 1,
         tasks: [],
+        expense:[]
       })),
     };
     calendarData.push(monthData);

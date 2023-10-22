@@ -6,9 +6,21 @@ import { connect } from "@/db/config";
 connect();
 export async function PUT(request: NextRequest) {
   try {
-    const { year, month, day, newTodo, previousTodo, email } =
-      await request.json();
+    const {
+      year,
+      month,
+      day,
+      newEventData,
+      previousEventData,
+      email,
+      eventName,
+    } = await request.json();
+
     const user = await User.findOne({ email });
+
+    const field = `calendar.$[year].months.$[month].dates.$[date].${
+      eventName == "todo" ? "tasks" : eventName
+    }.$[elementName]`;
 
     if (user) {
       const updatedUser = await User.findOneAndUpdate(
@@ -17,10 +29,7 @@ export async function PUT(request: NextRequest) {
         },
         {
           $set: {
-            "calendar.$[year].months.$[month].dates.$[date].tasks.$[task].name":
-              newTodo.name,
-            "calendar.$[year].months.$[month].dates.$[date].tasks.$[task].status":
-              newTodo.status,
+            [field]: newEventData,
           },
         },
         {
@@ -28,14 +37,14 @@ export async function PUT(request: NextRequest) {
             { "year.year": year },
             { "month.name": month },
             { "date.day": parseInt(day) },
-            { "task.name": previousTodo.name },
+            { "elementName.name": previousEventData.name },
           ],
           new: true,
         }
       );
 
       let monthData = [];
-      updatedUser.calendar.map( yearList => {
+      updatedUser.calendar.map((yearList) => {
         if (yearList.year === year) {
           yearList.months.map((monthList) => {
             if (monthList.name === month) {
@@ -43,19 +52,18 @@ export async function PUT(request: NextRequest) {
             }
           });
         }
-      })
+      });
 
       return NextResponse.json({
         success: true,
         msg: "Todo updated successfully",
-        data: { monthData, email: user.email, name:user.name },
-
+        data: { monthData, email: user.email, name: user.name },
       });
     } else {
       return NextResponse.json({ success: false, msg: "User not found" });
     }
   } catch (error) {
-    console.log("ERROR", error);
+    console.log("Edit ERROR", error);
 
     return NextResponse.json({ success: false, msg: "ERROR" });
   }

@@ -2,10 +2,10 @@
 
 import React from 'react'
 
-const Calendar = ({todosData, handleDateClick, currentDate, selectedMonth, selectedDay}) => {
+const Calendar = ({todosData = [], handleDateClick, currentDate, selectedMonth, selectedDay}) => {
   return (
     <div className="flex content-start flex-wrap">
-    {todosData.map((todo, index) => {
+    {todosData?.map((todo, index) => {
       let { day, tasks } = todo;
 
       let classname =

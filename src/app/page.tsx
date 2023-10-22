@@ -15,14 +15,12 @@ import {
   TodoList,
   Logout,
   Calendar,
+  DataDropDown,
 } from "./components/index";
 
 export default function Home() {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<any>({});
-
-  // all todos data from json
-  const [todosData, setTodosData] = useState<any[]>([]);
 
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -48,6 +46,8 @@ export default function Home() {
     todo: null,
   });
 
+  const [dataToShow, setDataToShow] = useState("todo");
+
   function fetchCurrentDate() {
     // Get the current date
     const currentDate = new Date();
@@ -71,15 +71,7 @@ export default function Home() {
     const currentDay = currentDate.getDate();
     let currentYear = currentDate.getFullYear();
 
-    // Get the number of days in the current month
-    let daysInCurrentMonth = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + 1,
-      0
-    ).getDate();
-
     setSelectedMonth(currentMonth);
-
     setSelectedDay(currentDay.toString());
     setCurrentDate({
       day: currentDay.toString(),
@@ -88,70 +80,41 @@ export default function Home() {
     });
   }
 
-  function settingTodosData(data: any, selMonth: any) {
-    let todosData: any[] = [];
-
-    let calendarData = data.calendar;
-    calendarData.map((year: any) => {
-      if (year.year == currentDate.year) {
-        year.months.map((month: any) => {
-          if (month.name == selMonth) {
-            todosData = month.dates;
-          }
-        });
-      }
-    });
-
-    setTodosData(todosData);
-  }
-
-  function settingLhsTodo(data: any, selMonth: any, selDay: any) {
-    let todo: any[] = [];
-    let calendarData = data.calendar;
-    calendarData.map((year: any) => {
-      if (year.year == currentDate.year) {
-        year.months.map((month: any) => {
-          if (month.name == selMonth) {
-            month.dates.map((day: any) => {
-              if (day.day == selDay) {
-                todo = day.tasks;
-              }
-            });
-          }
-        });
-      }
-    });
-
-    setLhsTodo(todo);
-  }
-
   const handleSelectChange = (event: any) => {
     setSelectedMonth(event.target.value);
 
     setSelectedDay("1");
 
-    settingTodosData(currentUser, event.target.value);
+    // settingTodosData(currentUser.monthData, event.target.value);
 
-    settingLhsTodo(currentUser, event.target.value, 1);
+    setLhsTodo(settingLhsTodo(currentUser.monthData, event.target.value));
   };
 
-  useEffect(() => {
-    fetchCurrentDate();
-    // fetchTodoData();
-  }, []);
+  const settingLhsTodo = (monthData, day, event = null) => {
+    let checker = event ? event : dataToShow;
+
+    for (let i = 0; i < monthData?.length; i++) {
+      if (monthData[i].day == day) {
+        return checker == "todo" ? monthData[i].tasks : monthData[i].expenses;
+      }
+    }
+    return [];
+  };
 
   const getUser = async () => {
-    const { signal } = new AbortController();
-    const res = await fetch("/api/get_user", { signal });
-
+    // const { signal } = new AbortController();
+    const res = await fetch("/api/get_user", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ month: selectedMonth, year: currentDate.year }),
+    });
     const resJson = await res.json();
 
     if (resJson.success) {
       setCurrentUser(resJson.data);
-
-      settingTodosData(resJson.data, selectedMonth);
-
-      settingLhsTodo(resJson.data, selectedMonth, selectedDay);
+      setLhsTodo(settingLhsTodo(resJson.data.monthData, selectedDay));
     } else {
       toast.error(`${resJson?.msg}`);
 
@@ -162,6 +125,11 @@ export default function Home() {
   };
 
   useEffect(() => {
+    fetchCurrentDate();
+    // fetchTodoData();
+  }, []);
+
+  useEffect(() => {
     if (selectedMonth) {
       getUser();
     }
@@ -169,27 +137,33 @@ export default function Home() {
     return () => {};
   }, [selectedMonth]);
 
+  useEffect(() => {
+    console.log(currentUser);
+  }, [currentUser]);
+
   function addTodoInSelectedDate() {
     setShowModal(true);
   }
 
+  // done
   function handleDateClick(ele: any) {
     setSelectedDay(ele);
-    settingLhsTodo(currentUser, selectedMonth, ele);
+    setLhsTodo(settingLhsTodo(currentUser.monthData, ele));
   }
 
-  const checkIfTodoAlreadyPresent = (todo: string): boolean => {
-    const value = lhsTodo.find((ele) => ele.name === todo);
+  const checkIfTodoAlreadyPresent = (todo: {}): boolean => {
+    const value = lhsTodo.find((ele) => ele.name === todo.name);
     return value ? true : false;
   };
 
+  // done
   async function addTodo(todo: any) {
     try {
       if (checkIfTodoAlreadyPresent(todo)) {
-        toast.error(`${todo} already present`);
+        toast.error(`${todo.name} already present`);
         return;
       }
-      let fetchData = await fetch("/api/add_todo", {
+      let fetchData = await fetch(`/api/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -198,8 +172,9 @@ export default function Home() {
           year: currentDate.year,
           month: selectedMonth,
           day: selectedDay,
-          todo,
+          eventData: todo,
           email: currentUser.email,
+          eventName: dataToShow,
         }),
       });
 
@@ -207,9 +182,7 @@ export default function Home() {
 
       setCurrentUser(resJson.data);
 
-      settingTodosData(resJson.data, selectedMonth);
-
-      settingLhsTodo(resJson.data, selectedMonth, selectedDay);
+      setLhsTodo(settingLhsTodo(resJson.data.monthData, selectedDay));
 
       setShowModal(false);
     } catch (error) {
@@ -217,9 +190,10 @@ export default function Home() {
     }
   }
 
+  // done
   const deleteTodo = async (todo: any) => {
     try {
-      let fetchData = await fetch("/api/delete_todo", {
+      let fetchData = await fetch("/api/delete", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -228,26 +202,25 @@ export default function Home() {
           year: currentDate.year,
           month: selectedMonth,
           day: selectedDay,
-          todo: todo.name,
+          eventData: todo,
           email: currentUser.email,
+          eventName: dataToShow,
         }),
       });
 
       const resJson = await fetchData.json();
 
       setCurrentUser(resJson.data);
-
-      settingTodosData(resJson.data, selectedMonth);
-
-      settingLhsTodo(resJson.data, selectedMonth, selectedDay);
+      setLhsTodo(settingLhsTodo(resJson.data.monthData, selectedDay));
     } catch (error) {
       console.log("ERROR", error);
     }
   };
 
+  // done
   async function updateTodoStatus(todo: any) {
     try {
-      const fetchData = await fetch("/api/edit_todo", {
+      const fetchData = await fetch("/api/edit", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -256,9 +229,10 @@ export default function Home() {
           year: currentDate.year,
           month: selectedMonth,
           day: selectedDay,
-          newTodo: { ...todo, status: !todo.status },
-          previousTodo: todo,
+          newEventData: { ...todo, status: todo.status == "1" ? "0" : "1" },
+          previousEventData: { name: todo.name },
           email: currentUser.email,
+          eventName: dataToShow,
         }),
       });
 
@@ -266,9 +240,9 @@ export default function Home() {
 
       setCurrentUser(resJson.data);
 
-      settingTodosData(resJson.data, selectedMonth);
+      // settingTodosData(resJson.data, selectedMonth);
 
-      settingLhsTodo(resJson.data, selectedMonth, selectedDay);
+      setLhsTodo(settingLhsTodo(resJson.data.monthData, selectedDay));
     } catch (error) {
       console.log("ERROR", error);
     }
@@ -278,8 +252,9 @@ export default function Home() {
     setShowTooltipOn(todo.name);
   }
 
+  // done
   async function deleteAllTodo() {
-    const fetchData = await fetch("api/delete_all_todo", {
+    const fetchData = await fetch("api/delete_all", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -289,15 +264,15 @@ export default function Home() {
         month: selectedMonth,
         day: selectedDay,
         email: currentUser.email,
+        eventName: dataToShow,
       }),
     });
 
     const resJson = await fetchData.json();
 
     setCurrentUser(resJson.data);
-    settingTodosData(resJson.data, selectedMonth);
-
-    settingLhsTodo(resJson.data, selectedMonth, selectedDay);
+    // settingTodosData(resJson.data, selectedMonth);
+    setLhsTodo([]);
   }
 
   function ifSelectedDateisToday(): boolean {
@@ -355,14 +330,14 @@ export default function Home() {
     setShowModal(true);
   }
 
+  // done
   async function editTodo(todo: any) {
-
     if (checkIfTodoAlreadyPresent(todo.name)) {
       toast.error(`${todo.name} already present`);
       return;
     }
 
-    const fetchData = await fetch("/api/edit_todo", {
+    const fetchData = await fetch("/api/edit", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -372,8 +347,9 @@ export default function Home() {
         month: selectedMonth,
         day: selectedDay,
         email: currentUser.email,
-        previousTodo: editTodoInfo.todo,
-        newTodo: todo,
+        previousEventData: { name: editTodoInfo?.todo?.name },
+        newEventData: todo,
+        eventName: dataToShow,
       }),
     });
 
@@ -381,7 +357,7 @@ export default function Home() {
 
     setCurrentUser(resJson.data);
 
-    settingLhsTodo(resJson.data, selectedMonth, selectedDay);
+    setLhsTodo(settingLhsTodo(resJson.data.monthData, selectedDay));
 
     setShowModal(false);
 
@@ -407,10 +383,18 @@ export default function Home() {
     }
   }
 
+  // done
   const openCurrentDate = () => {
     setSelectedMonth(currentDate.month);
     setSelectedDay(currentDate.day);
-    settingLhsTodo(currentUser,currentDate.month, currentDate.day )
+    setLhsTodo(settingLhsTodo(currentUser.monthData, currentDate.day));
+  };
+
+  const handleEventChange = (e: any) => {
+    setDataToShow(e.target.value);
+    setLhsTodo(
+      settingLhsTodo(currentUser.monthData, selectedDay, e.target.value)
+    );
   };
 
   return (
@@ -424,6 +408,7 @@ export default function Home() {
           editTodo={editTodo}
           addTodo={addTodo}
           setEditTodoInfo={setEditTodoInfo}
+          dataToShow={dataToShow}
         />
       ) : (
         ""
@@ -443,6 +428,11 @@ export default function Home() {
             handleSelectChange={handleSelectChange}
           />
 
+          <DataDropDown
+            handleEventChange={handleEventChange}
+            dataToShow={dataToShow}
+          />
+
           <TodoList
             selectedMonth={selectedMonth}
             selectedDay={selectedDay}
@@ -458,6 +448,7 @@ export default function Home() {
             handleHover={handleHover}
             handleEdit={handleEdit}
             ifSelectedDateisToday={ifSelectedDateisToday}
+            dataToShow={dataToShow}
           />
 
           <Logout handleLogout={handleLogout} />
@@ -465,7 +456,7 @@ export default function Home() {
 
         <div className="right w-full">
           <Calendar
-            todosData={todosData}
+            todosData={currentUser?.monthData || []}
             currentDate={currentDate}
             handleDateClick={handleDateClick}
             selectedMonth={selectedMonth}

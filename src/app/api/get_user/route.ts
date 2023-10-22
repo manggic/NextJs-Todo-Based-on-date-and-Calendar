@@ -1,18 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { cookies } from "next/headers";
 
 import User from "@/models/UserModel";
 import { connect } from "@/db/config";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    // const cookieStore = cookies()
-    // const token = cookieStore.get('token')?.value
-
+    const { month, year } = await request.json();
     await connect();
 
     const token = request.cookies.get("token")?.value;
@@ -35,10 +32,22 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ msg: "User not found OR invalid token" });
     }
 
+    let monthData = [];
+
+    user.calendar.map((yearList) => {
+      if (yearList.year === year) {
+        yearList.months.map((monthList) => {
+          if (monthList.name === month) {
+            monthData = monthList.dates;
+          }
+        });
+      }
+    });
+
     return NextResponse.json({
       success: true,
       msg: "get user successfully",
-      data: user,
+      data: { monthData, email: user.email, name:user.name },
     });
   } catch (error) {
     console.log({ error });

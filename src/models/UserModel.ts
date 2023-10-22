@@ -18,6 +18,18 @@ const dateSchema = new mongoose.Schema({
     required: true,
   },
   tasks: [taskSchema],
+  expenses: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      price: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
 });
 
 const monthSchema = new mongoose.Schema({

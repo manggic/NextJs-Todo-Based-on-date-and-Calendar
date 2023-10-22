@@ -1,8 +1,9 @@
-import { months } from "@/constant";
+import { months, events } from "@/constant";
 import React from "react";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { MdDelete, MdOutlineEdit, MdLogout } from "react-icons/md";
 import { LuPlusCircle, LuPlus } from "react-icons/lu";
+
 
 import { RiDeleteBin6Line } from "react-icons/ri";
 const TodoList = ({
@@ -20,12 +21,19 @@ const TodoList = ({
   handleHover,
   handleEdit,
   ifSelectedDateisToday,
+  dataToShow,
 }) => {
+ 
+  let fields = events[dataToShow].fields
+  let width = events[dataToShow].width
+  let trimLength = events[dataToShow].trimLength
+
   return (
-    <div className="todos">
-      <div className="text-white pt-20 pl-7 font-bold flex items-center">
+    <div className="ml-5">
+      <div className="text-white pt-20 font-bold flex items-center">
         <div className="bg-black px-2">
-          Todos{" : "}
+          {dataToShow}
+          {" : "}
           <span className="">
             {selectedDay
               ? `${selectedDay} ${months[selectedMonth].shortName} ${currentDate.year}`
@@ -49,6 +57,8 @@ const TodoList = ({
           ""
         )}
 
+        
+
         {todo?.length &&
         !isSelectedDatePrevoius([
           selectedDay,
@@ -69,7 +79,7 @@ const TodoList = ({
             return (
               <>
                 <li
-                  className="pl-7 mb-3 flex items-center relative"
+                  className="mb-3 ml-3 flex items-start relative"
                   key={t.name}
                 >
                   {showTooltipOn == t.name ? (
@@ -89,7 +99,15 @@ const TodoList = ({
                     ""
                   )}
 
-                  <span
+                  {fields.map( (eve,ind)  => {
+                      return <span onMouseEnter={() => handleHover(t)}
+                      onMouseLeave={() => setShowTooltipOn("")} key={ind} className={`text-sm  w-[${width}px] ${ind==0?'':'pl-4 pr-2'}`}  >
+                        { ind == 0 ? t[eve].length > trimLength ? t[eve].slice(0, trimLength) + "..." : t[eve]: '₹ '+ t[eve]  }
+                      </span>
+                  } )} 
+
+
+                  {/* <span
                     onMouseEnter={() => handleHover(t)}
                     onMouseLeave={() => setShowTooltipOn("")}
                     className="text-sm todo_text"
@@ -97,11 +115,19 @@ const TodoList = ({
                     {t.name.length > 10 ? t.name.slice(0, 10) + "..." : t.name}
                   </span>
 
+                  {dataToShow === "expenses" ? (
+                    <span className="cursor-pointer pl-3 text-lg font-bold">
+                      {t.price}
+                    </span>
+                  ) : (
+                    ""
+                  )} */}
+
                   {!isSelectedDatePrevoius([
                     selectedDay,
                     selectedMonth,
                     currentDate.year,
-                  ]) ? (
+                  ]) && events[dataToShow].edit ? (
                     <div
                       onClick={() => handleEdit(t, index)}
                       className="ml-1 cursor-pointer"
@@ -116,7 +142,7 @@ const TodoList = ({
                     selectedDay,
                     selectedMonth,
                     currentDate.year,
-                  ]) ? (
+                  ]) && events[dataToShow].delete ? (
                     <div
                       className="ml-3 cursor-pointer"
                       onClick={() => deleteTodo(t)}
@@ -127,24 +153,28 @@ const TodoList = ({
                     ""
                   )}
 
-                  {ifSelectedDateisToday() ? (
-                    <button
-                      className={`ml-3 ${
-                        t.status ? "bg-[aquamarine]" : "bg-orange-200"
-                      } font-semibold cursor-pointer rounded-lg py-1 px-2 text-xs   text-black`}
-                      onClick={() => updateTodoStatus(t)}
-                    >
-                      {!t.status ? "NOT DONE" : "DONE"}
-                    </button>
+                  {events[dataToShow].status ? (
+                    ifSelectedDateisToday() ? (
+                      <button
+                        className={`ml-3 ${
+                          t.status ? "bg-[aquamarine]" : "bg-orange-200"
+                        } font-semibold cursor-pointer rounded-lg py-1 px-2 text-xs   text-black`}
+                        onClick={() => updateTodoStatus(t)}
+                      >
+                        {!t.status ? "NOT DONE" : "DONE"}
+                      </button>
+                    ) : (
+                      <span
+                        className={`ml-3 ${
+                          t.status ? "bg-[aquamarine]" : "bg-orange-200"
+                        } font-semibold	py-1 px-2 rounded-lg text-xs border  text-black`}
+                        // onClick={()=>updateTodoStatus(t)}
+                      >
+                        {!t.status ? "NOT DONE" : "DONE"}
+                      </span>
+                    )
                   ) : (
-                    <span
-                      className={`ml-3 ${
-                        t.status ? "bg-[aquamarine]" : "bg-orange-200"
-                      } font-semibold	py-1 px-2 rounded-lg text-xs border  text-black`}
-                      // onClick={()=>updateTodoStatus(t)}
-                    >
-                      {!t.status ? "NOT DONE" : "DONE"}
-                    </span>
+                    ""
                   )}
                 </li>
               </>

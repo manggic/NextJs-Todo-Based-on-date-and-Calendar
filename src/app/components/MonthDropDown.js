@@ -5,7 +5,7 @@ import React from 'react'
 const MonthDropDown = ({selectedMonth,handleSelectChange }) => {
   return (
     <>
-     <div className="dropdown text-black pt-12 flex flex-col justify-center items-center">
+     <div className="dropdown text-black flex flex-col justify-center items-center">
           <div className="pb-1 text-sm text-white">Select month</div>
           <select
             name="year"

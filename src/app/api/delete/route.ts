@@ -7,9 +7,12 @@ import { connect } from "@/db/config";
 connect();
 export async function DELETE(request: NextRequest) {
   try {
-    let { year, month, day, todo, email } = await request.json();
+    let { year, month, day, eventName, email, eventData } = await request.json();
 
     let user = await User.findOne({ email });
+    const field = `calendar.$[year].months.$[month].dates.$[date].${
+      eventName == "todo" ? "tasks" : eventName
+    }`;
     if (user) {
       const updatedUser = await User.findOneAndUpdate(
         {
@@ -17,8 +20,8 @@ export async function DELETE(request: NextRequest) {
         },
         {
           $pull: {
-            "calendar.$[year].months.$[month].dates.$[date].tasks": {
-              name: todo,
+            [field]: {
+              name:eventData.name,
             },
           },
         },
