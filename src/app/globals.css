@@ -40,7 +40,7 @@ ul li {
   font-size: 14px;
   /* white-space: nowrap; */
   z-index: 999;
-  width: 138px; /* Adjust width as needed */
+  width: 120px; /* Adjust width as needed */
   text-align: left;
   /* right: 100%; Position to the right of the container */
   /* top: 50%; */
@@ -139,7 +139,7 @@ input {
 .todo-scroll {
   max-height: 300px;
   overflow-y: scroll;
-  /* margin-right: 20px; */
+  margin-right: 20px;
 }
 
 ::-webkit-scrollbar {

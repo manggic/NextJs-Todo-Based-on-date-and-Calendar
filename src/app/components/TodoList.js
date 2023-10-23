@@ -1,8 +1,7 @@
 import { months, events } from "@/constant";
 import React from "react";
-import { MdDelete, MdOutlineEdit, MdLogout } from "react-icons/md";
-import { LuPlusCircle, LuPlus } from "react-icons/lu";
-
+import { MdOutlineEdit } from "react-icons/md";
+import { LuPlus } from "react-icons/lu";
 
 import { RiDeleteBin6Line } from "react-icons/ri";
 const TodoList = ({
@@ -21,12 +20,12 @@ const TodoList = ({
   handleEdit,
   ifSelectedDateisToday,
   dataToShow,
-  totalExpense
+  totalExpense,
 }) => {
- 
-  let fields = events[dataToShow].fields
-  let width = events[dataToShow].width
-  let trimLength = events[dataToShow].trimLength
+  let fields = events[dataToShow].fields;
+  let width = events[dataToShow].width;
+  let trimLength = events[dataToShow].trimLength;
+  let widthCss = `w-[${width}px]`;
 
   return (
     <div className="ml-5">
@@ -56,8 +55,6 @@ const TodoList = ({
         ) : (
           ""
         )}
-
-        
 
         {todo?.length &&
         !isSelectedDatePrevoius([
@@ -99,12 +96,24 @@ const TodoList = ({
                     ""
                   )}
 
-                  {fields.map( (eve,ind)  => {
-                      return <span onMouseEnter={() => handleHover(t)}
-                      onMouseLeave={() => setShowTooltipOn("")} key={ind} className={`text-sm ${ind==0?`w-[${width}px]`:'pl-4 pr-2'}`}  >
-                        { ind == 0 ? t[eve].length > trimLength ? t[eve].slice(0, trimLength) + "..." : t[eve]: '₹ '+ t[eve]  }
+                  {fields.map((eve, ind) => {
+                    return (
+                      <span
+                        onMouseEnter={() => handleHover(t)}
+                        onMouseLeave={() => setShowTooltipOn("")}
+                        key={ind}
+                        className={`text-sm ${
+                          ind == 0 ? widthCss : "pl-4 pr-2"
+                        }`}
+                      >
+                        {ind == 0
+                          ? t[eve].length > trimLength
+                            ? t[eve].slice(0, trimLength) + "..."
+                            : t[eve]
+                          : "₹ " + t[eve]}
                       </span>
-                  } )} 
+                    );
+                  })}
 
                   {/* <span
                     onMouseEnter={() => handleHover(t)}
@@ -184,7 +193,11 @@ const TodoList = ({
         <div className="text-white px-7 my-3">Empty!!!!</div>
       )}
 
-       {dataToShow == 'expenses' && todo?.length?<div className="ml-3 text-[azure] text-lg">total - {totalExpense}</div> :''} 
+      {dataToShow == "expenses" && todo?.length ? (
+        <div className="ml-3 text-[azure] text-lg">total - {totalExpense}</div>
+      ) : (
+        ""
+      )}
       <style jsx global>
         {`
           .ItsTop {

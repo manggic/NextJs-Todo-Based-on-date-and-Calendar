@@ -50,18 +50,18 @@ const Modal = ({
     <div className="fixed w-full h-screen	flex justify-center items-center z-20 backdrop-blur-lg">
       <form
         onSubmit={(e) => handleSubmit(e)}
-        className="bg-[#f7f7f7] pt-8 pb-5 px-4 rounded"
+        className="bg-[#f7f7f7] pt-6 pb-5 px-4 rounded"
         style={{ width: "350px", backdropFilter: blur("5px") }}
       >
         <Toaster />
-        <div className="text-black text-center text-md pb-2">{dataToShow}</div>
+        <div className="text-black capitalize text-center text-md pb-5">Enter {dataToShow}</div>
 
         <div className="flex flex-col items-center">
           {events[dataToShow].formfields.map((ele) => {
             return (
               <>
                 <input
-                  className="px-1 py-1 mb-2 text-black border border-black outline-[#2f363b]"
+                  className="p-1 mb-2 text-black border border-black outline-[#2f363b]"
                   type="text"
                   name={ele}
                   id={ele}
