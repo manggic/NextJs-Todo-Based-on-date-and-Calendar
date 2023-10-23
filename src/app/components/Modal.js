@@ -9,22 +9,28 @@ const Modal = ({
   editTodoInfo,
   editTodo,
   setEditTodoInfo,
-  dataToShow
+  dataToShow,
 }) => {
   const [modalTodo, setModalTodo] = useState(editTodoInfo?.todo?.name || "");
 
+  const field = events[dataToShow].formfields;
 
-  const [formData, setFormData] = useState(editTodoInfo?.todo||{})
+  const [formData, setFormData] = useState(editTodoInfo?.todo || {});
 
   function handleSubmit(e) {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (editTodoInfo?.todo?.name) {
+    if (
+      editTodoInfo?.todo?.name &&
+      Object.keys(formData)?.length == field?.length + 1
+    ) {
       editTodo(formData);
-    } else if (checkIfObjectAndHasData(formData)) {
+    } else if (
+      Object.keys(formData)?.length == field?.length
+    ) {
       addTodo(formData);
     } else {
-      toast.error("Pls enter todo");
+      toast.error("Pls fill complete data");
     }
   }
 
@@ -37,17 +43,13 @@ const Modal = ({
   };
 
   const handleChange = (e) => {
-       setFormData({  ...formData,  [e.target.name]:e.target.value  })
-  }
-
-  useEffect( () => {
-         console.log(formData);
-  } , [formData])
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   return (
     <div className="fixed w-full h-screen	flex justify-center items-center z-20 backdrop-blur-lg">
       <form
-        onSubmit={(e)=>handleSubmit(e)}
+        onSubmit={(e) => handleSubmit(e)}
         className="bg-[#f7f7f7] pt-8 pb-5 px-4 rounded"
         style={{ width: "350px", backdropFilter: blur("5px") }}
       >
@@ -55,18 +57,21 @@ const Modal = ({
         <div className="text-black text-center text-md pb-2">{dataToShow}</div>
 
         <div className="flex flex-col items-center">
-
-         {events[dataToShow].formfields.map(ele => {
-            return <><input
-            className="px-1 py-1 mb-2 text-black border border-black outline-[#2f363b]"
-            type="text"
-            name={ele}
-            id={ele}
-            placeholder={ele}
-            value={formData?.[ele] || ''}
-            onChange={(e) => handleChange(e)}
-          /></>
-         })}
+          {events[dataToShow].formfields.map((ele) => {
+            return (
+              <>
+                <input
+                  className="px-1 py-1 mb-2 text-black border border-black outline-[#2f363b]"
+                  type="text"
+                  name={ele}
+                  id={ele}
+                  placeholder={ele}
+                  value={formData?.[ele] || ""}
+                  onChange={(e) => handleChange(e)}
+                />
+              </>
+            );
+          })}
         </div>
         <div className="flex justify-end mt-4">
           <button
@@ -85,7 +90,7 @@ const Modal = ({
           </button>
         </div>
       </form>
-     </div> 
+    </div>
   );
 };
 

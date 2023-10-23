@@ -21,6 +21,7 @@ export async function DELETE(request: NextRequest) {
         {
           $set: {
             [field]: [],
+            'calendar.$[year].months.$[month].dates.$[date].totalExpense':0
           },
         },
         {

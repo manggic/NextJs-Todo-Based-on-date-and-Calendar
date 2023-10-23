@@ -1,6 +1,5 @@
 import { months, events } from "@/constant";
 import React from "react";
-import { AiOutlinePlusCircle } from "react-icons/ai";
 import { MdDelete, MdOutlineEdit, MdLogout } from "react-icons/md";
 import { LuPlusCircle, LuPlus } from "react-icons/lu";
 
@@ -22,6 +21,7 @@ const TodoList = ({
   handleEdit,
   ifSelectedDateisToday,
   dataToShow,
+  totalExpense
 }) => {
  
   let fields = events[dataToShow].fields
@@ -79,7 +79,7 @@ const TodoList = ({
             return (
               <>
                 <li
-                  className="mb-3 ml-3 flex items-start relative"
+                  className="mb-3 ml-3 flex items-center relative"
                   key={t.name}
                 >
                   {showTooltipOn == t.name ? (
@@ -101,11 +101,10 @@ const TodoList = ({
 
                   {fields.map( (eve,ind)  => {
                       return <span onMouseEnter={() => handleHover(t)}
-                      onMouseLeave={() => setShowTooltipOn("")} key={ind} className={`text-sm  w-[${width}px] ${ind==0?'':'pl-4 pr-2'}`}  >
+                      onMouseLeave={() => setShowTooltipOn("")} key={ind} className={`text-sm ${ind==0?`w-[${width}px]`:'pl-4 pr-2'}`}  >
                         { ind == 0 ? t[eve].length > trimLength ? t[eve].slice(0, trimLength) + "..." : t[eve]: '₹ '+ t[eve]  }
                       </span>
                   } )} 
-
 
                   {/* <span
                     onMouseEnter={() => handleHover(t)}
@@ -185,6 +184,7 @@ const TodoList = ({
         <div className="text-white px-7 my-3">Empty!!!!</div>
       )}
 
+       {dataToShow == 'expenses' && todo?.length?<div className="ml-3 text-[azure] text-lg">total - {totalExpense}</div> :''} 
       <style jsx global>
         {`
           .ItsTop {

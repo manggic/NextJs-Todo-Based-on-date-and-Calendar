@@ -4,6 +4,7 @@ interface MonthDataItem {
   day: string;
   tasks: any[]; // Define the appropriate type for tasks
   expenses: any[];
+  totalExpense:Number
 }
 
 export type monthDataType = MonthDataItem[]

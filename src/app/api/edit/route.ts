@@ -16,6 +16,23 @@ export async function PUT(request: NextRequest) {
       eventName,
     } = await request.json();
 
+    let diff: Number = 0;
+    let incre = {};
+
+    if (eventName === "expenses") {
+      if (newEventData.price > previousEventData.price) {
+        diff = Number(newEventData.price) - Number(previousEventData.price);
+        incre = {
+          "calendar.$[year].months.$[month].dates.$[date].totalExpense": diff,
+        };
+      } else {
+        diff = Number(previousEventData.price) - Number(newEventData.price);
+        incre = {
+          "calendar.$[year].months.$[month].dates.$[date].totalExpense": -diff,
+        };
+      }
+    }
+
     const user = await User.findOne({ email });
 
     const field = `calendar.$[year].months.$[month].dates.$[date].${
@@ -31,6 +48,7 @@ export async function PUT(request: NextRequest) {
           $set: {
             [field]: newEventData,
           },
+          $inc: incre,
         },
         {
           arrayFilters: [
@@ -43,10 +61,10 @@ export async function PUT(request: NextRequest) {
         }
       );
 
-      let monthData:[] = [];
-      updatedUser.calendar.map((yearList:any) => {
+      let monthData: [] = [];
+      updatedUser.calendar.map((yearList: any) => {
         if (yearList.year === year) {
-          yearList.months.map((monthList:any) => {
+          yearList.months.map((monthList: any) => {
             if (monthList.name === month) {
               monthData = monthList.dates;
             }

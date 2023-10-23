@@ -50,6 +50,8 @@ export default function Home() {
 
   const [dataToShow, setDataToShow] = useState("todo");
 
+  const [ totolExpense, setTotalExpense ] = useState<Number>(0)
+
   function fetchCurrentDate() {
     // Get the current date
     const currentDate = new Date();
@@ -97,6 +99,7 @@ export default function Home() {
 
     for (let i = 0; i < monthData?.length; i++) {
       if (monthData[i].day == day) {
+         setTotalExpense(monthData[i]?.totalExpense || 0) 
         return checker == "todo" ? monthData[i].tasks : monthData[i].expenses;
       }
     }
@@ -154,7 +157,7 @@ export default function Home() {
   }
 
   const checkIfTodoAlreadyPresent = (todo: DynamicTodo): boolean => {
-    const value = lhsTodo.find((ele) => ele.name === todo.name);
+    const value = lhsTodo.find((ele) => todo._id!==ele._id && (ele.name === todo.name));
     return value ? true : false;
   };
 
@@ -232,7 +235,7 @@ export default function Home() {
           month: selectedMonth,
           day: selectedDay,
           newEventData: { ...todo, status: todo.status == "1" ? "0" : "1" },
-          previousEventData: { name: todo.name },
+          previousEventData: { ...todo },
           email: currentUser.email,
           eventName: dataToShow,
         }),
@@ -349,7 +352,7 @@ export default function Home() {
         month: selectedMonth,
         day: selectedDay,
         email: currentUser.email,
-        previousEventData: { name: editTodoInfo?.todo?.name },
+        previousEventData: { ...editTodoInfo?.todo },
         newEventData: todo,
         eventName: dataToShow,
       }),
@@ -451,6 +454,7 @@ export default function Home() {
             handleEdit={handleEdit}
             ifSelectedDateisToday={ifSelectedDateisToday}
             dataToShow={dataToShow}
+            totalExpense={totolExpense}
           />
 
           <Logout handleLogout={handleLogout} />

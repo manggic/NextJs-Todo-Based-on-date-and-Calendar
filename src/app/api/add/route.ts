@@ -15,16 +15,21 @@ export async function POST(request: NextRequest) {
       const field = `calendar.$[year].months.$[month].dates.$[date].${
         eventName == "todo" ? "tasks" : eventName
       }`;
+
+      const update = eventName == "expenses" ? {  $push: {
+        [field]: eventData,
+      }, $inc: {
+        "calendar.$[year].months.$[month].dates.$[date].totalExpense": eventData.price,
+      } }: { $push: {
+        [field]: eventData,
+      }}
+
       if (user) {
         const updatedUser = await User.findOneAndUpdate(
           {
             email,
           },
-          {
-            $push: {
-              [field]: eventData,
-            },
-          },
+          update,
           {
             arrayFilters: [
               { "year.year": year },
