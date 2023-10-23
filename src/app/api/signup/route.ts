@@ -103,7 +103,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       msg: "sign up done",
-      data: savedUser,
       sendEmailResponse: sendEmailResp.data,
       timeAddingVerifyTokenInDB: sendEmailResp.currentTime,
     });

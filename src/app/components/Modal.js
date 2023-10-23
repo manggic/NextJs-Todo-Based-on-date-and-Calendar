@@ -54,20 +54,24 @@ const Modal = ({
         style={{ width: "350px", backdropFilter: blur("5px") }}
       >
         <Toaster />
-        <div className="text-black capitalize text-center text-md pb-5">Enter {dataToShow}</div>
+        <div className="text-black capitalize text-center text-lg pb-5 font-sans font-semibold">{dataToShow}</div>
 
-        <div className="flex flex-col items-center">
-          {events[dataToShow].formfields.map((ele) => {
+        <div className="flex flex-col text-black">
+          {field.map((ele) => {
             return (
               <>
+                <label className="pb-1 text-sm">Enter {ele.fieldName}</label>
                 <input
-                  className="p-1 mb-2 text-black border border-black outline-[#2f363b]"
-                  type="text"
-                  name={ele}
-                  id={ele}
-                  placeholder={ele}
-                  value={formData?.[ele] || ""}
+                  className="p-1 mb-3 text-black border border-black outline-[#2f363b]"
+                  type={ele?.fieldType}
+                  name={ele?.fieldName}
+                  id={ele?.fieldName}
+                  // placeholder={ele}
+                  value={formData?.[ele?.fieldName] || ""}
                   onChange={(e) => handleChange(e)}
+                  max={ele?.max}
+                  min={ele?.min}
+
                 />
               </>
             );

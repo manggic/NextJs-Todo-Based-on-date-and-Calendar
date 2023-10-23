@@ -20,7 +20,8 @@ const LoginPage = () => {
 
   const router = useRouter();
 
-  const handleLogin = async () => {
+  const handleLogin = async (e:any) => {
+    e.preventDefault()
     try {
       if (email && password) {
         setDisableSubmitBtn(true);
@@ -58,7 +59,7 @@ const LoginPage = () => {
         <ForgotPassModal setShowForgotPassModal={setShowForgotPassModal} />
       )}
       <Toaster />
-      <div className="form-box">
+      <form onSubmit={handleLogin} className="form-box">
         <h2 className="form-heading">LOGIN</h2>
         <div className="form-input-group">
           <label htmlFor="email">Email</label>
@@ -127,7 +128,8 @@ const LoginPage = () => {
         <button
           className="submit-button"
           disabled={disableSubmitBtn}
-          onClick={handleLogin}
+          // onClick={handleLogin}
+          type="submit"
         >
           SUBMIT
         </button>
@@ -137,7 +139,7 @@ const LoginPage = () => {
             Register here
           </a>{" "}
         </div>
-      </div>
+      </form>
     </div>
   );
 };

@@ -404,6 +404,8 @@ export default function Home() {
 
   return (
     <div className="bg-[#2f363b] min-h-screen relative">
+
+      { currentUser?.name ? <>
       <Toaster />
 
       {showModal ? (
@@ -470,6 +472,8 @@ export default function Home() {
           />
         </div>
       </div>
+      </> : <div className="flex justify-center items-center min-h-screen text-lg">Loading...</div >  }
+      
     </div>
   );
 }

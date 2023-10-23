@@ -15,7 +15,8 @@ const SignUpPage = () => {
 
   const router = useRouter();
 
-  const handleSignUp = async () => {
+  const handleSignUp = async (e:any) => {
+    e.preventDefault()
     try {
       // Add your sign-up logic here
 
@@ -53,7 +54,7 @@ const SignUpPage = () => {
   return (
     <div className="form-container">
       <Toaster />
-      <div className="form-box shadow-lg drop-shadow-3xl">
+      <form onSubmit={handleSignUp} className="form-box shadow-lg drop-shadow-3xl">
         <h2 className="form-heading">SIGN UP</h2>
         <div className="form-input-group">
           <label htmlFor="email">Name</label>
@@ -109,12 +110,13 @@ const SignUpPage = () => {
 
         <button
           className="submit-button"
-          onClick={handleSignUp}
+          // onClick={handleSignUp}
           disabled={disableSubmitBtn}
+          type="submit"
         >
           SUBMIT
         </button>
-      </div>
+      </form>
     </div>
   );
 };

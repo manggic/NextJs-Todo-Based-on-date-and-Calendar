@@ -194,7 +194,7 @@ const TodoList = ({
       )}
 
       {dataToShow == "expenses" && todo?.length ? (
-        <div className="ml-3 text-[azure] text-lg">total - {totalExpense}</div>
+        <div className="ml-3 text-rose-200 font-bold text-md">Total - {totalExpense.toLocaleString('en-IN').split('.')[0]}</div>
       ) : (
         ""
       )}
