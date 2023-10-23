@@ -28,14 +28,14 @@ export async function GET(request: NextRequest) {
 
         // After updating all dates within a month, set the totalExpense for that month
         month.totalExpense = month.dates.reduce(
-          (acc, date) => acc + date.totalExpense,
+          (acc:any, date:any) => acc + date.totalExpense,
           0
         );
       }
 
       // After updating all months within the calendar, set the totalExpense for the user
       user.calendar[0].totalExpense = user.calendar[0].months.reduce(
-        (acc, month) => acc + month.totalExpense,
+        (acc:any, month:any) => acc + month.totalExpense,
         0
       );
 
