@@ -30,7 +30,7 @@ const Calendar = ({todosData = [], handleDateClick, currentDate, selectedMonth, 
           onMouseEnter={() => setShowExpense(true)}
           onMouseLeave={() => setShowExpense(false)}
         >
-            {showExpense? <span className='absolute text-[15px] top-0 right-2'>{totalExpense?<><span className='text-[10px] pb-5 pr-[2px]'>₹</span>{totalExpense.toLocaleString('en-IN').split('.')[0]}</>  :""}</span>:""} 
+            {showExpense? <span className='absolute text-[cyan] text-[15px] top-0 right-2'>{totalExpense?<><span className='text-[10px] pb-5 pr-[2px]'>₹</span>{totalExpense.toLocaleString('en-IN').split('.')[0]}</>  :""}</span>:""} 
           {day}
         </div>
       );
