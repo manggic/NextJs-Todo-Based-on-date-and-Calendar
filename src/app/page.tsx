@@ -52,6 +52,8 @@ export default function Home() {
 
   const [ totolExpense, setTotalExpense ] = useState<Number>(0)
 
+  const [monthExpense, setMonthExpense] = useState(0)
+
   function fetchCurrentDate() {
     // Get the current date
     const currentDate = new Date();
@@ -120,6 +122,7 @@ export default function Home() {
     if (resJson.success) {
       setCurrentUser(resJson.data);
       setLhsTodo(settingLhsTodo(resJson.data.monthData, selectedDay));
+      setMonthExpense(resJson.data.monthExpense)
     } else {
       toast.error(`${resJson?.msg}`);
 
@@ -185,7 +188,9 @@ export default function Home() {
 
       const resJson = await fetchData.json();
 
-      setCurrentUser(resJson.data);
+      setCurrentUser(resJson?.data);
+
+      setMonthExpense(resJson?.data?.monthExpense)
 
       setLhsTodo(settingLhsTodo(resJson.data.monthData, selectedDay));
 
@@ -216,6 +221,7 @@ export default function Home() {
       const resJson = await fetchData.json();
 
       setCurrentUser(resJson.data);
+      setMonthExpense(resJson?.data?.monthExpense)
       setLhsTodo(settingLhsTodo(resJson.data.monthData, selectedDay));
     } catch (error) {
       console.log("ERROR", error);
@@ -245,6 +251,8 @@ export default function Home() {
 
       setCurrentUser(resJson.data);
 
+      
+
       // settingTodosData(resJson.data, selectedMonth);
 
       setLhsTodo(settingLhsTodo(resJson.data.monthData, selectedDay));
@@ -258,7 +266,7 @@ export default function Home() {
   }
 
   // done
-  async function deleteAllTodo() {
+  async function deleteAllTodo(dayExpense:any) {    
     const fetchData = await fetch("api/delete_all", {
       method: "DELETE",
       headers: {
@@ -270,11 +278,12 @@ export default function Home() {
         day: selectedDay,
         email: currentUser.email,
         eventName: dataToShow,
+        expense: dayExpense || 0
       }),
     });
 
     const resJson = await fetchData.json();
-
+    setMonthExpense(resJson?.data?.monthExpense)
     setCurrentUser(resJson.data);
     // settingTodosData(resJson.data, selectedMonth);
     setLhsTodo([]);
@@ -361,6 +370,7 @@ export default function Home() {
     const resJson = await fetchData.json();
 
     setCurrentUser(resJson.data);
+    setMonthExpense(resJson?.data?.monthExpense)
 
     setLhsTodo(settingLhsTodo(resJson.data.monthData, selectedDay));
 
@@ -426,6 +436,7 @@ export default function Home() {
         currentUser={currentUser}
         currentDate={currentDate}
         selectedMonth={selectedMonth}
+        monthExpense={monthExpense}
       />
 
       <div className="flex mt-5">

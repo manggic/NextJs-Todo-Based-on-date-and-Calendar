@@ -33,12 +33,13 @@ export async function POST(request: NextRequest) {
     }
 
     let monthData:[] = [];
-
+    let monthExpense:Number = 0
     user.calendar.map((yearList:any) => {
       if (yearList.year === year) {
         yearList.months.map((monthList:any) => {
           if (monthList.name === month) {
             monthData = monthList.dates;
+            monthExpense = monthList.totalExpense
           }
         });
       }
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       msg: "get user successfully",
-      data: { monthData, email: user.email, name:user.name },
+      data: { monthData, email: user.email, name:user.name, monthExpense },
     });
   } catch (error) {
     console.log({ error });

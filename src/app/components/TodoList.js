@@ -62,7 +62,7 @@ const TodoList = ({
           selectedMonth,
           currentDate.year,
         ]) ? (
-          <div onClick={() => deleteAllTodo()} className="pl-3 cursor-pointer">
+          <div onClick={() => deleteAllTodo(totalExpense)} className="pl-3 cursor-pointer">
             <RiDeleteBin6Line />
           </div>
         ) : (

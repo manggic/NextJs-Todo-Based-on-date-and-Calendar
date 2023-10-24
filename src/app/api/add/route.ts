@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
         [field]: eventData,
       }, $inc: {
         "calendar.$[year].months.$[month].dates.$[date].totalExpense": eventData.price,
+        "calendar.$[year].months.$[month].totalExpense": eventData.price
       } }: { $push: {
         [field]: eventData,
       }}
@@ -41,11 +42,13 @@ export async function POST(request: NextRequest) {
         );
 
         let monthData:[] = [];
+        let monthExpense:Number = 0
         updatedUser.calendar.map((yearList:any) => {
           if (yearList.year === year) {
             yearList.months.map((monthList:any) => {
               if (monthList.name === month) {
                 monthData = monthList.dates;
+                monthExpense = monthList.totalExpense
               }
             });
           }
@@ -54,7 +57,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: true,
           msg: "updated successfully",
-          data: { monthData, email: user.email, name: user.name },
+          data: { monthData, email: user.email, name: user.name, monthExpense },
         });
       } else {
         return NextResponse.json({ success: false, msg: "User not found" });

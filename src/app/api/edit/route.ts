@@ -24,11 +24,13 @@ export async function PUT(request: NextRequest) {
         diff = Number(newEventData.price) - Number(previousEventData.price);
         incre = {
           "calendar.$[year].months.$[month].dates.$[date].totalExpense": diff,
+          "calendar.$[year].months.$[month].totalExpense": diff,
         };
       } else {
         diff = Number(previousEventData.price) - Number(newEventData.price);
         incre = {
           "calendar.$[year].months.$[month].dates.$[date].totalExpense": -diff,
+          "calendar.$[year].months.$[month].totalExpense": -diff,
         };
       }
     }
@@ -62,11 +64,13 @@ export async function PUT(request: NextRequest) {
       );
 
       let monthData: [] = [];
+      let monthExpense:Number = 0
       updatedUser.calendar.map((yearList: any) => {
         if (yearList.year === year) {
           yearList.months.map((monthList: any) => {
             if (monthList.name === month) {
               monthData = monthList.dates;
+              monthExpense = monthList.totalExpense
             }
           });
         }
@@ -75,7 +79,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({
         success: true,
         msg: "Todo updated successfully",
-        data: { monthData, email: user.email, name: user.name },
+        data: { monthData, email: user.email, name: user.name, monthExpense },
       });
     } else {
       return NextResponse.json({ success: false, msg: "User not found" });

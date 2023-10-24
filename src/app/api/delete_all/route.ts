@@ -6,7 +6,7 @@ import { connect } from "@/db/config";
 connect();
 export async function DELETE(request: NextRequest) {
   try {
-    let { year, month, day, email, eventName } = await request.json();
+    let { year, month, day, email, eventName, expense } = await request.json();
     let user = await User.findOne({ email });
 
 
@@ -21,8 +21,12 @@ export async function DELETE(request: NextRequest) {
         {
           $set: {
             [field]: [],
-            'calendar.$[year].months.$[month].dates.$[date].totalExpense':0
+            'calendar.$[year].months.$[month].dates.$[date].totalExpense':0,
           },
+          $inc:{
+              "calendar.$[year].months.$[month].totalExpense":
+             -expense
+        }
         },
         {
           arrayFilters: [
@@ -35,11 +39,14 @@ export async function DELETE(request: NextRequest) {
       );
 
       let monthData:[] = [];
+      let monthExpense:Number = 0
+
       updatedUser.calendar.map((yearList:any) => {
         if (yearList.year === year) {
           yearList.months.map((monthList:any) => {
             if (monthList.name === month) {
               monthData = monthList.dates;
+              monthExpense = monthList.totalExpense
             }
           });
         }
@@ -48,7 +55,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({
         success: true,
         msg: "Todo deleted successfully",
-        data: { monthData, email: user.email, name:user.name },
+        data: { monthData, email: user.email, name:user.name, monthExpense },
       });
     }
 

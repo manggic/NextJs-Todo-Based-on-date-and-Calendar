@@ -10,21 +10,23 @@ export async function GET(request: NextRequest) {
 
     for (const user of users) {
       for (const month of user.calendar[0].months) {
+        let totalExpense = 0;
         for (const date of month.dates) {
-          let totalExpense = 0;
+          totalExpense = totalExpense + date.totalExpense
+          
 
-          for (const expense of date.expenses) {
-            // Assuming each expense object has a 'price' property
-            console.log("expense.price ???", expense.price);
+          // for (const expense of date.expenses) {
+          //   // Assuming each expense object has a 'price' property
+          //   console.log("expense.price ???", expense.price);
 
-            if (expense.price) {
-              totalExpense += expense.price;
-            }
-          }
+          //   if (expense.price) {
+          //     totalExpense += expense.price;
+          //   }
+          // }
 
-          date.totalExpense = totalExpense; // Update totalExpense for this date
-
+          // date.totalExpense = totalExpense; // Update totalExpense for this date
         }
+        month.totalExpense = totalExpense
 
         // After updating all dates within a month, set the totalExpense for that month
         month.totalExpense = month.dates.reduce(

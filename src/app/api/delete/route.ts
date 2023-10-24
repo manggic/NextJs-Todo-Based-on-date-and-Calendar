@@ -26,6 +26,8 @@ export async function DELETE(request: NextRequest) {
             $inc: {
               "calendar.$[year].months.$[month].dates.$[date].totalExpense":
                 -eventData.price,
+              "calendar.$[year].months.$[month].totalExpense":
+                -eventData.price
             },
           }
         : {
@@ -52,11 +54,13 @@ export async function DELETE(request: NextRequest) {
       );
 
       let monthData: [] = [];
+      let monthExpense:Number = 0
       updatedUser.calendar.map((yearList: any) => {
         if (yearList.year === year) {
           yearList.months.map((monthList: any) => {
             if (monthList.name === month) {
               monthData = monthList.dates;
+              monthExpense = monthList.totalExpense
             }
           });
         }
@@ -65,7 +69,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({
         success: true,
         msg: "Todo deleted successfully",
-        data: { monthData, email: user.email, name: user.name },
+        data: { monthData, email: user.email, name: user.name, monthExpense },
       });
     }
   } catch (error) {

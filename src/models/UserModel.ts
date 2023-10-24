@@ -39,6 +39,7 @@ const monthSchema = new mongoose.Schema({
     required: true,
   },
   dates: [dateSchema],
+  totalExpense :Number
 });
 
 const yearSchema = new mongoose.Schema({
