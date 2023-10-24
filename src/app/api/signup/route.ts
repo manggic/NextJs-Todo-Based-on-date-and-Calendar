@@ -50,6 +50,7 @@ function generateDefaultCalendarData() {
         expense:[],
         totalExpense:0
       })),
+      totalExpense:0
     };
     calendarData.push(monthData);
   }
