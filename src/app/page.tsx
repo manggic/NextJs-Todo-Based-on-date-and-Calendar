@@ -146,8 +146,11 @@ export default function Home() {
   }, [selectedMonth]);
 
   useEffect(() => {
-    console.log(currentUser);
-  }, [currentUser]);
+    console.log({currentUser});
+    console.log({lhsTodo});
+  }, [currentUser, lhsTodo]);
+
+
 
   function addTodoInSelectedDate() {
     setShowModal(true);

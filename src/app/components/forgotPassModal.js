@@ -7,7 +7,7 @@ const ForgotPassModal = ({ setShowForgotPassModal }) => {
   const [email, setEmail] = useState("");
 
   const handleEmailChange = (event) => {
-    setEmail(event.target.value);
+    setEmail(event.target.value.trim());
   };
 
   const handleSubmit = async (event) => {

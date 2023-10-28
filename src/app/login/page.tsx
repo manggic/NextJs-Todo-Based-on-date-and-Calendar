@@ -67,7 +67,7 @@ const LoginPage = () => {
             type="email"
             id="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value.trim())}
           />
         </div>
 
@@ -79,7 +79,7 @@ const LoginPage = () => {
               type={showPass ? "text" : "password"}
               id="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value.trim())}
               className="password-input"
             />
             {password ? (

@@ -68,8 +68,8 @@ const events = {
     edit: true,
     delete: true,
     status: false,
-    width:120,
-    trimLength:20,
+    width:110,
+    trimLength:10,
     formfields: [{fieldName:"name", fieldType:"text"} , {fieldName:"price", fieldType:"number"}],
   },
   todo : {

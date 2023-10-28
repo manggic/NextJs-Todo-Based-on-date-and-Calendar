@@ -25,7 +25,6 @@ const TodoList = ({
   let fields = events[dataToShow].fields;
   let width = events[dataToShow].width;
   let trimLength = events[dataToShow].trimLength;
-  let widthCss = `w-[${width}px]`;
 
   return (
     <div className="ml-5">
@@ -103,8 +102,9 @@ const TodoList = ({
                         onMouseLeave={() => setShowTooltipOn("")}
                         key={ind}
                         className={`text-sm ${
-                          ind == 0 ? widthCss : "pl-4 pr-2"
+                          ind == 0 ? '' : "pl-4 pr-2"
                         }`}
+                        style={{ width:ind == 0?width :"" }}
                       >
                         {ind == 0
                           ? t[eve].length > trimLength
