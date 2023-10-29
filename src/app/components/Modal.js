@@ -1,7 +1,6 @@
-import { events, checkIfObjectAndHasData } from "@/constant";
-import { useEffect, useState } from "react";
+import { events, handleExtraSpace } from "@/constant";
+import { useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
-import { AiFillCloseCircle } from "react-icons/ai";
 
 const Modal = ({
   setShowModal,
@@ -11,7 +10,6 @@ const Modal = ({
   setEditTodoInfo,
   dataToShow,
 }) => {
-  const [modalTodo, setModalTodo] = useState(editTodoInfo?.todo?.name || "");
 
   const field = events[dataToShow].formfields;
 
@@ -24,11 +22,9 @@ const Modal = ({
       editTodoInfo?.todo?.name &&
       Object.keys(formData)?.length == field?.length + 1
     ) {
-      editTodo(formData);
-    } else if (
-      Object.keys(formData)?.length == field?.length
-    ) {
-      addTodo(formData);
+      editTodo(handleExtraSpace(formData));
+    } else if (Object.keys(formData)?.length == field?.length) {
+      addTodo(handleExtraSpace(formData));
     } else {
       toast.error("Pls fill complete data");
     }
@@ -43,7 +39,7 @@ const Modal = ({
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value.trim() });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   return (
@@ -54,7 +50,9 @@ const Modal = ({
         style={{ width: "350px", backdropFilter: blur("5px") }}
       >
         <Toaster />
-        <div className="text-black capitalize text-center text-lg pb-5 font-sans font-semibold">{dataToShow}</div>
+        <div className="text-black capitalize text-center text-lg pb-5 font-sans font-semibold">
+          {dataToShow}
+        </div>
 
         <div className="flex flex-col text-black">
           {field.map((ele) => {
@@ -71,7 +69,6 @@ const Modal = ({
                   onChange={(e) => handleChange(e)}
                   max={ele?.max}
                   min={ele?.min}
-
                 />
               </>
             );

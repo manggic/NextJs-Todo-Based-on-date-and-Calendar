@@ -94,5 +94,13 @@ const checkIfObjectAndHasData = (data) => {
 }
 
 
+const handleExtraSpace = (formData) => {
+  let newFormData = {};
+  for (let single in formData) {
+    newFormData = { ...newFormData, [single]: formData[single].trim() };
+  }
+  return newFormData
+};
 
-export { months, events, checkIfObjectAndHasData };
+
+export { months, events, checkIfObjectAndHasData , handleExtraSpace};
