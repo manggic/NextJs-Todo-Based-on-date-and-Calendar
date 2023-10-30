@@ -299,7 +299,19 @@ export default function Home() {
     return false;
   }
 
-  function isSelectedDatePrevoius(date2: any) {
+
+   const whereIAmNow = () => {
+      if(ifSelectedDateisToday()){
+         return 'present'
+      }else if(isSelectedDatePrevoius()){
+        return 'past'
+      }else{
+        return 'future'
+      } 
+   }
+
+
+  function isSelectedDatePrevoius() {
     // today date - date1
     // date1 - [04,august,2023]
 
@@ -309,7 +321,7 @@ export default function Home() {
     let date1 = [currentDate.day, currentDate.month, currentDate.year];
 
     let [d1, m1, y1] = date1;
-    let [d2, m2, y2] = date2;
+    let [d2, m2, y2] = [ selectedDay, selectedMonth, currentDate.year ];
 
     // year comparison
     if (parseInt(y2) < parseInt(y1)) {
@@ -471,6 +483,7 @@ export default function Home() {
             ifSelectedDateisToday={ifSelectedDateisToday}
             dataToShow={dataToShow}
             totalExpense={totolExpense}
+            whereIAmNow={whereIAmNow}
           />
 
           <Logout handleLogout={handleLogout} />

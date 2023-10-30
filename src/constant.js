@@ -64,23 +64,23 @@ let months = {
 const events = {
   expenses : {
     fields: ["name", "price"],
-    // formfields : ["name", "price"],
-    edit: true,
-    delete: true,
     status: false,
     width:110,
     trimLength:10,
     formfields: [{fieldName:"name", fieldType:"text"} , {fieldName:"price", fieldType:"number"}],
+    addAcess: { past: true ,present: true, future: false },
+    editAcess: { past: true ,present: true, future: false },
+    deleteAcess: { past: false ,present: true, future: false }
   },
   todo : {
     fields: ["name"],
-    // formfields : ["name", "status"],
-    edit: true,
-    delete: true,
     status: true,
     width:75,
     trimLength:10,
     formfields : [ {fieldName:"name", fieldType:"text"} , {fieldName:"status", fieldType:"number",min:0, max:1}  ],
+    addAcess: { past: false ,present: true, future: true },
+    editAcess: { past: false ,present: true, future: true },
+    deleteAcess: { past: false ,present: true, future: true }
   }
 }
 

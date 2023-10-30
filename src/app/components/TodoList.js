@@ -21,11 +21,13 @@ const TodoList = ({
   ifSelectedDateisToday,
   dataToShow,
   totalExpense,
+  whereIAmNow
 }) => {
   let fields = events[dataToShow].fields;
   let width = events[dataToShow].width;
   let trimLength = events[dataToShow].trimLength;
 
+  console.log("whereIAmNow ", whereIAmNow());
   return (
     <div className="ml-5">
       <div className="text-white pt-20 font-bold flex items-center">
@@ -39,12 +41,8 @@ const TodoList = ({
           </span>
         </div>
 
-        {selectedDay &&
-        !isSelectedDatePrevoius([
-          selectedDay,
-          selectedMonth,
-          currentDate.year,
-        ]) ? (
+        {/* check's if add button need's to show based on config */}
+        {  events[dataToShow].addAcess[whereIAmNow()]? (
           <div
             className="cursor-pointer pl-3 text-lg font-bold"
             onClick={addTodoInSelectedDate}
@@ -56,11 +54,7 @@ const TodoList = ({
         )}
 
         {todo?.length &&
-        !isSelectedDatePrevoius([
-          selectedDay,
-          selectedMonth,
-          currentDate.year,
-        ]) ? (
+        events[dataToShow].deleteAcess[whereIAmNow()] ? (
           <div onClick={() => deleteAllTodo(totalExpense)} className="pl-3 cursor-pointer">
             <RiDeleteBin6Line />
           </div>
@@ -131,11 +125,7 @@ const TodoList = ({
                     ""
                   )} */}
 
-                  {!isSelectedDatePrevoius([
-                    selectedDay,
-                    selectedMonth,
-                    currentDate.year,
-                  ]) && events[dataToShow].edit ? (
+                  {events[dataToShow].editAcess[whereIAmNow()] ? (
                     <div
                       onClick={() => handleEdit(t, index)}
                       className="ml-1 cursor-pointer"
@@ -146,11 +136,7 @@ const TodoList = ({
                     ""
                   )}
 
-                  {!isSelectedDatePrevoius([
-                    selectedDay,
-                    selectedMonth,
-                    currentDate.year,
-                  ]) && events[dataToShow].delete ? (
+                  {events[dataToShow].deleteAcess[whereIAmNow()] ? (
                     <div
                       className="ml-3 cursor-pointer"
                       onClick={() => deleteTodo(t)}
