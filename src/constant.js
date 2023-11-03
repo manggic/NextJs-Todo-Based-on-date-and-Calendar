@@ -97,7 +97,7 @@ const checkIfObjectAndHasData = (data) => {
 const handleExtraSpace = (formData) => {
   let newFormData = {};
   for (let single in formData) {
-    newFormData = { ...newFormData, [single]: formData[single].trim() };
+    newFormData = { ...newFormData, [single]:  typeof formData?.[single] === 'string'? formData[single].trim():formData[single] };
   }
   return newFormData
 };
