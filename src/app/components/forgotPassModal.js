@@ -6,17 +6,17 @@ import toast, { Toaster } from "react-hot-toast";
 const ForgotPassModal = ({ setShowForgotPassModal }) => {
   const [email, setEmail] = useState("");
 
+  const [disableSubmitBtn, setDisableSubmitBtn] = useState(false);
   const handleEmailChange = (event) => {
     setEmail(event.target.value.trim());
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    // toast.success("check your email");
-
     try {
+      setDisableSubmitBtn(true);
       if (!email) {
+        setDisableSubmitBtn(false);
         toast.error("pls provide email");
         return;
       }
@@ -29,6 +29,8 @@ const ForgotPassModal = ({ setShowForgotPassModal }) => {
         body: JSON.stringify({ email }),
       });
 
+      setDisableSubmitBtn(false);
+
       const resJson = await res.json();
 
       if (resJson.success) {
@@ -39,6 +41,7 @@ const ForgotPassModal = ({ setShowForgotPassModal }) => {
 
       console.log(resJson);
     } catch (error) {
+      setDisableSubmitBtn(false);
       console.log("ERROR on email submit");
     }
     // Perform your email validation or submission logic here
@@ -65,7 +68,7 @@ const ForgotPassModal = ({ setShowForgotPassModal }) => {
             onChange={handleEmailChange}
             className="mb-3"
           />
-          <button className="submit-button" type="submit">
+          <button disabled={disableSubmitBtn} className="submit-button" type="submit">
             Submit
           </button>
         </form>

@@ -40,7 +40,6 @@ const LoginPage = () => {
         } else {
           router.push("/");
         }
-        setDisableSubmitBtn(false);
       } else {
         toast.error("Please enter all the details");
       }

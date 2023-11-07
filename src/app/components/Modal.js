@@ -9,11 +9,14 @@ const Modal = ({
   editTodo,
   setEditTodoInfo,
   dataToShow,
+  disableBtn
 }) => {
 
   const field = events[dataToShow].formfields;
 
   const [formData, setFormData] = useState(editTodoInfo?.todo || {});
+
+  
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -79,6 +82,7 @@ const Modal = ({
             // onClick={() => handleSubmit()}
             className="ml-2 text-sm border px-4 py-2 text-white-200 bg-[#2f363b]  rounded-md"
             type="submit"
+            disabled={disableBtn}
           >
             Submit
           </button>

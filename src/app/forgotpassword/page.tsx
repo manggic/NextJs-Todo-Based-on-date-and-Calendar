@@ -8,11 +8,13 @@ const ForgotPasswordPage = () => {
   const router = useRouter();
   const [password, setPassword] = useState("");
   const [confirmpassword, setConfirmPassword] = useState("");
+  const [disableSubmitBtn, setDisableSubmitBtn] = useState(false);
 
   const handleSubmit = async () => {
     try {
       if (password && confirmpassword) {
         if (password === confirmpassword) {
+          setDisableSubmitBtn(true)
           const res = await fetch("/api/forgotpassword", {
             method: "POST",
             headers: {
@@ -29,8 +31,9 @@ const ForgotPasswordPage = () => {
 
           if (resJson.success) {
             toast.success("Password updated");
-            router.push("login");
+            router.push("/login");
           } else {
+            setDisableSubmitBtn(false)
             toast.error("Something went wrong");
           }
         } else {
@@ -40,6 +43,7 @@ const ForgotPasswordPage = () => {
         toast.error("Pls enter complete details");
       }
     } catch (error: any) {
+      setDisableSubmitBtn(false)
       console.log("ERROR", error);
     }
   };
@@ -68,7 +72,7 @@ const ForgotPasswordPage = () => {
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
 
-        <button onClick={handleSubmit} className="submit-button mt-3 w-3/12">
+        <button  disabled={disableSubmitBtn} onClick={handleSubmit} className="submit-button mt-3 w-3/12">
           Submit
         </button>
       </div>

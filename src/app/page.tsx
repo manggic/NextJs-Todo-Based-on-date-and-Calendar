@@ -18,7 +18,7 @@ import {
   DataDropDown,
 } from "./components/index";
 
-import {monthDataType, DynamicTodo, EditTodoInfo} from '../types'
+import { monthDataType, DynamicTodo, EditTodoInfo } from "../types";
 
 export default function Home() {
   const router = useRouter();
@@ -39,7 +39,7 @@ export default function Home() {
   // month selected
   const [selectedMonth, setSelectedMonth] = useState<string>("");
 
-  const [selectedDay, setSelectedDay] = useState<string>('');
+  const [selectedDay, setSelectedDay] = useState<string>("");
 
   const [showTooltipOn, setShowTooltipOn] = useState<string>("");
 
@@ -50,9 +50,12 @@ export default function Home() {
 
   const [dataToShow, setDataToShow] = useState("todo");
 
-  const [ totolExpense, setTotalExpense ] = useState<Number>(0)
+  const [totolExpense, setTotalExpense] = useState<Number>(0);
 
-  const [monthExpense, setMonthExpense] = useState(0)
+  const [monthExpense, setMonthExpense] = useState(0);
+
+  // handling disable btn
+  const [disableBtn, setDisableBtn] = useState(false);
 
   function fetchCurrentDate() {
     // Get the current date
@@ -96,12 +99,16 @@ export default function Home() {
     setLhsTodo(settingLhsTodo(currentUser.monthData, event.target.value));
   };
 
-  const settingLhsTodo = (monthData:monthDataType, day:string, event = null) => {
+  const settingLhsTodo = (
+    monthData: monthDataType,
+    day: string,
+    event = null
+  ) => {
     let checker = event ? event : dataToShow;
 
     for (let i = 0; i < monthData?.length; i++) {
       if (monthData[i].day == day) {
-         setTotalExpense(monthData[i]?.totalExpense || 0) 
+        setTotalExpense(monthData[i]?.totalExpense || 0);
         return checker == "todo" ? monthData[i].tasks : monthData[i].expenses;
       }
     }
@@ -122,7 +129,7 @@ export default function Home() {
     if (resJson.success) {
       setCurrentUser(resJson.data);
       setLhsTodo(settingLhsTodo(resJson.data.monthData, selectedDay));
-      setMonthExpense(resJson.data.monthExpense)
+      setMonthExpense(resJson.data.monthExpense);
     } else {
       toast.error(`${resJson?.msg}`);
 
@@ -146,11 +153,9 @@ export default function Home() {
   }, [selectedMonth]);
 
   useEffect(() => {
-    console.log({currentUser});
-    console.log({lhsTodo});
+    console.log({ currentUser });
+    console.log({ lhsTodo });
   }, [currentUser, lhsTodo]);
-
-
 
   function addTodoInSelectedDate() {
     setShowModal(true);
@@ -163,14 +168,18 @@ export default function Home() {
   }
 
   const checkIfTodoAlreadyPresent = (todo: DynamicTodo): boolean => {
-    const value = lhsTodo.find((ele) => todo._id!==ele._id && (ele.name === todo.name));
+    const value = lhsTodo.find(
+      (ele) => todo._id !== ele._id && ele.name === todo.name
+    );
     return value ? true : false;
   };
 
   // done
   async function addTodo(todo: any) {
     try {
+      setDisableBtn(true);
       if (checkIfTodoAlreadyPresent(todo)) {
+        setDisableBtn(false);
         toast.error(`${todo.name} already present`);
         return;
       }
@@ -189,16 +198,19 @@ export default function Home() {
         }),
       });
 
+      setDisableBtn(false);
+
       const resJson = await fetchData.json();
 
       setCurrentUser(resJson?.data);
 
-      setMonthExpense(resJson?.data?.monthExpense)
+      setMonthExpense(resJson?.data?.monthExpense);
 
       setLhsTodo(settingLhsTodo(resJson.data.monthData, selectedDay));
 
       setShowModal(false);
     } catch (error) {
+      setDisableBtn(false);
       console.log("ERROR ????", error);
     }
   }
@@ -224,7 +236,7 @@ export default function Home() {
       const resJson = await fetchData.json();
 
       setCurrentUser(resJson.data);
-      setMonthExpense(resJson?.data?.monthExpense)
+      setMonthExpense(resJson?.data?.monthExpense);
       setLhsTodo(settingLhsTodo(resJson.data.monthData, selectedDay));
     } catch (error) {
       console.log("ERROR", error);
@@ -254,8 +266,6 @@ export default function Home() {
 
       setCurrentUser(resJson.data);
 
-      
-
       // settingTodosData(resJson.data, selectedMonth);
 
       setLhsTodo(settingLhsTodo(resJson.data.monthData, selectedDay));
@@ -269,7 +279,7 @@ export default function Home() {
   }
 
   // done
-  async function deleteAllTodo(dayExpense:any) {    
+  async function deleteAllTodo(dayExpense: any) {
     const fetchData = await fetch("api/delete_all", {
       method: "DELETE",
       headers: {
@@ -281,12 +291,12 @@ export default function Home() {
         day: selectedDay,
         email: currentUser.email,
         eventName: dataToShow,
-        expense: dayExpense || 0
+        expense: dayExpense || 0,
       }),
     });
 
     const resJson = await fetchData.json();
-    setMonthExpense(resJson?.data?.monthExpense)
+    setMonthExpense(resJson?.data?.monthExpense);
     setCurrentUser(resJson.data);
     // settingTodosData(resJson.data, selectedMonth);
     setLhsTodo([]);
@@ -299,17 +309,15 @@ export default function Home() {
     return false;
   }
 
-
-   const whereIAmNow = () => {
-      if(ifSelectedDateisToday()){
-         return 'present'
-      }else if(isSelectedDatePrevoius()){
-        return 'past'
-      }else{
-        return 'future'
-      } 
-   }
-
+  const whereIAmNow = () => {
+    if (ifSelectedDateisToday()) {
+      return "present";
+    } else if (isSelectedDatePrevoius()) {
+      return "past";
+    } else {
+      return "future";
+    }
+  };
 
   function isSelectedDatePrevoius() {
     // today date - date1
@@ -321,7 +329,7 @@ export default function Home() {
     let date1 = [currentDate.day, currentDate.month, currentDate.year];
 
     let [d1, m1, y1] = date1;
-    let [d2, m2, y2] = [ selectedDay, selectedMonth, currentDate.year ];
+    let [d2, m2, y2] = [selectedDay, selectedMonth, currentDate.year];
 
     // year comparison
     if (parseInt(y2) < parseInt(y1)) {
@@ -361,7 +369,9 @@ export default function Home() {
 
   // done
   async function editTodo(todo: DynamicTodo) {
+    setDisableBtn(true);
     if (checkIfTodoAlreadyPresent(todo)) {
+      setDisableBtn(false);
       toast.error(`${todo.name} already present`);
       return;
     }
@@ -382,10 +392,12 @@ export default function Home() {
       }),
     });
 
+    setDisableBtn(false);
+
     const resJson = await fetchData.json();
 
     setCurrentUser(resJson.data);
-    setMonthExpense(resJson?.data?.monthExpense)
+    setMonthExpense(resJson?.data?.monthExpense);
 
     setLhsTodo(settingLhsTodo(resJson.data.monthData, selectedDay));
 
@@ -399,9 +411,12 @@ export default function Home() {
 
   async function handleLogout() {
     try {
+      setDisableBtn(true);
       const res = await fetch("/api/signout");
 
       const resJson = await res.json();
+
+      setDisableBtn(false);
 
       if (resJson.success) {
         router.push("/login");
@@ -409,6 +424,8 @@ export default function Home() {
         toast.error("log out failed");
       }
     } catch (error) {
+      setDisableBtn(false);
+
       toast.error("log out failed");
     }
   }
@@ -429,78 +446,83 @@ export default function Home() {
 
   return (
     <div className="bg-[#2f363b] min-h-screen relative">
+      {currentUser?.name ? (
+        <>
+          <Toaster />
 
-      { currentUser?.name ? <>
-      <Toaster />
+          {showModal ? (
+            <Modal
+              setShowModal={setShowModal}
+              editTodoInfo={editTodoInfo}
+              editTodo={editTodo}
+              addTodo={addTodo}
+              setEditTodoInfo={setEditTodoInfo}
+              dataToShow={dataToShow}
+              disableBtn={disableBtn}
+            />
+          ) : (
+            ""
+          )}
 
-      {showModal ? (
-        <Modal
-          setShowModal={setShowModal}
-          editTodoInfo={editTodoInfo}
-          editTodo={editTodo}
-          addTodo={addTodo}
-          setEditTodoInfo={setEditTodoInfo}
-          dataToShow={dataToShow}
-        />
+          <Header
+            openCurrentDate={openCurrentDate}
+            currentUser={currentUser}
+            currentDate={currentDate}
+            selectedMonth={selectedMonth}
+            monthExpense={monthExpense}
+          />
+
+          <div className="flex mt-5">
+            <div className="left w-1/4">
+              <MonthDropDown
+                selectedMonth={selectedMonth}
+                handleSelectChange={handleSelectChange}
+              />
+
+              <DataDropDown
+                handleEventChange={handleEventChange}
+                dataToShow={dataToShow}
+              />
+
+              <TodoList
+                selectedMonth={selectedMonth}
+                selectedDay={selectedDay}
+                currentDate={currentDate}
+                addTodoInSelectedDate={addTodoInSelectedDate}
+                isSelectedDatePrevoius={isSelectedDatePrevoius}
+                deleteTodo={deleteTodo}
+                updateTodoStatus={updateTodoStatus}
+                deleteAllTodo={deleteAllTodo}
+                todo={lhsTodo}
+                showTooltipOn={showTooltipOn}
+                setShowTooltipOn={setShowTooltipOn}
+                handleHover={handleHover}
+                handleEdit={handleEdit}
+                ifSelectedDateisToday={ifSelectedDateisToday}
+                dataToShow={dataToShow}
+                totalExpense={totolExpense}
+                whereIAmNow={whereIAmNow}
+              />
+
+              <Logout disableBtn={disableBtn} handleLogout={handleLogout} />
+            </div>
+
+            <div className="right w-full">
+              <Calendar
+                todosData={currentUser?.monthData || []}
+                currentDate={currentDate}
+                handleDateClick={handleDateClick}
+                selectedMonth={selectedMonth}
+                selectedDay={selectedDay}
+              />
+            </div>
+          </div>
+        </>
       ) : (
-        ""
+        <div className="flex justify-center items-center min-h-screen text-lg">
+          Loading...
+        </div>
       )}
-
-      <Header
-        openCurrentDate={openCurrentDate}
-        currentUser={currentUser}
-        currentDate={currentDate}
-        selectedMonth={selectedMonth}
-        monthExpense={monthExpense}
-      />
-
-      <div className="flex mt-5">
-        <div className="left w-1/4">
-          <MonthDropDown
-            selectedMonth={selectedMonth}
-            handleSelectChange={handleSelectChange}
-          />
-
-          <DataDropDown
-            handleEventChange={handleEventChange}
-            dataToShow={dataToShow}
-          />
-
-          <TodoList
-            selectedMonth={selectedMonth}
-            selectedDay={selectedDay}
-            currentDate={currentDate}
-            addTodoInSelectedDate={addTodoInSelectedDate}
-            isSelectedDatePrevoius={isSelectedDatePrevoius}
-            deleteTodo={deleteTodo}
-            updateTodoStatus={updateTodoStatus}
-            deleteAllTodo={deleteAllTodo}
-            todo={lhsTodo}
-            showTooltipOn={showTooltipOn}
-            setShowTooltipOn={setShowTooltipOn}
-            handleHover={handleHover}
-            handleEdit={handleEdit}
-            ifSelectedDateisToday={ifSelectedDateisToday}
-            dataToShow={dataToShow}
-            totalExpense={totolExpense}
-            whereIAmNow={whereIAmNow}
-          />
-
-          <Logout handleLogout={handleLogout} />
-        </div>
-
-        <div className="right w-full">
-          <Calendar
-            todosData={currentUser?.monthData || []}
-            currentDate={currentDate}
-            handleDateClick={handleDateClick}
-            selectedMonth={selectedMonth}
-            selectedDay={selectedDay}
-          />
-        </div>
-      </div>
-      </> : <div className="flex justify-center items-center min-h-screen text-lg">Loading...</div >  }
-      
     </div>
   );
 }

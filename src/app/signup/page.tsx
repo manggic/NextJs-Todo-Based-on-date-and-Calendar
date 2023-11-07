@@ -42,11 +42,12 @@ const SignUpPage = () => {
             router.push("/login");
           }, 2000);
         }
-        setDisableSubmitBtn(false);
       } else {
+        setDisableSubmitBtn(false);
         toast.error("Please enter all the details");
       }
     } catch (error: any) {
+      setDisableSubmitBtn(false);
       toast.error(error);
     }
   };
