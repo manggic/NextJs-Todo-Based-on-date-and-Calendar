@@ -77,7 +77,7 @@ const events = {
     status: true,
     width:75,
     trimLength:10,
-    formfields : [ {fieldName:"name", fieldType:"text"} , {fieldName:"status", fieldType:"number",min:0, max:1}  ],
+    formfields : [ {fieldName:"name", fieldType:"text"}],
     addAcess: { past: false ,present: true, future: true },
     editAcess: { past: false ,present: true, future: true },
     deleteAcess: { past: false ,present: true, future: true }
@@ -103,4 +103,11 @@ const handleExtraSpace = (formData) => {
 };
 
 
-export { months, events, checkIfObjectAndHasData , handleExtraSpace};
+const checkIfAllFieldsPresent = (eName, data) => {
+    for(let f of events[eName].fields){
+       if(!data[f]) return false
+       return true
+    }  
+}
+
+export { months, events, checkIfObjectAndHasData , handleExtraSpace, checkIfAllFieldsPresent};

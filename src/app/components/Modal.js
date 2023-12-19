@@ -1,4 +1,4 @@
-import { events, handleExtraSpace } from "@/constant";
+import { checkIfAllFieldsPresent, events, handleExtraSpace } from "@/constant";
 import { useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 
@@ -16,17 +16,15 @@ const Modal = ({
 
   const [formData, setFormData] = useState(editTodoInfo?.todo || {});
 
-  
-
   function handleSubmit(e) {
     e.preventDefault();
 
     if (
       editTodoInfo?.todo?.name &&
-      Object.keys(formData)?.length == field?.length + 1
+      checkIfAllFieldsPresent(dataToShow, formData)
     ) {
       editTodo(handleExtraSpace(formData));
-    } else if (Object.keys(formData)?.length == field?.length) {
+    } else if (checkIfAllFieldsPresent(dataToShow, formData)) {
       addTodo(handleExtraSpace(formData));
     } else {
       toast.error("Pls fill complete data");
