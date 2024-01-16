@@ -110,4 +110,53 @@ const checkIfAllFieldsPresent = (eName, data) => {
     }  
 }
 
-export { months, events, checkIfObjectAndHasData , handleExtraSpace, checkIfAllFieldsPresent};
+function generateDefaultCalendarData() {
+  const calendarData = [];
+
+  // month list
+  const months = [
+    "january",
+    "february",
+    "march",
+    "april",
+    "may",
+    "june",
+    "july",
+    "august",
+    "september",
+    "october",
+    "november",
+    "december",
+  ];
+
+  // get current year (2023)
+  const currentYear = new Date().getFullYear();
+
+  // looping through month
+  for (const month of months) {
+    // get days in a month
+    const daysInMonth = new Date(
+      currentYear,
+      months.indexOf(month) + 1,
+      0
+    ).getDate();
+
+    // creating obj for single month with name and dates property
+    // { name:"january", dates: [ { day:1, tasks:[] }, { day:2, tasks:[] }]  }
+    const monthData = {
+      name: month,
+      dates: Array.from({ length: daysInMonth }, (_, index) => ({
+        day: index + 1,
+        tasks: [],
+        expense:[],
+        totalExpense:0
+      })),
+      totalExpense:0
+    };
+    calendarData.push(monthData);
+  }
+
+  return [{ year: currentYear.toString(), months: calendarData }];
+}
+
+export { months, events, checkIfObjectAndHasData , handleExtraSpace, checkIfAllFieldsPresent, generateDefaultCalendarData};

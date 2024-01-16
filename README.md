@@ -145,10 +145,21 @@ bsondump /path/to/users.bson
 This command will output the contents of the .bson file in a human-readable format, allowing you to see the data stored in the file.
 ```
 
-* todo
 
-2) addtodo pop-up position is not proper
 
+## mongoDB query 
+```
+// Limit the Number of Documents Returned:
+const users = await UserModel.find().limit(100); // Adjust the limit as needed
+
+
+// Only fetch the fields that you need.
+const users = await UserModel.find({}, { name: 1, email: 1 });
+
+
+// Increase Timeout
+const users = await UserModel.find().maxTimeMS(20000); // Set a higher timeout value
+```
 
 
 

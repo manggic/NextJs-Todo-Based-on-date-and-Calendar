@@ -2,6 +2,9 @@ import mongoose, { ConnectOptions } from "mongoose";
 
 const { MONGO_URL } = process.env;
 
+
+console.log('MONGO_URL >>>>',MONGO_URL);
+
 export const connect = async () => {
   try {
     const mongoURL: any = MONGO_URL;
@@ -25,7 +28,7 @@ export const connect = async () => {
       console.log("Connected to MongoDB successfully!");
     });
   } catch (error) {
-    console.log("DB connection failed!!!");
-    console.log("DB ERROR >>", error);
+    console.log(" +++++++++++++++++++++++ DB CONNECTION FAILED!!! +++++++++++++++++++++++ ");
+    console.log(" +++++++++++++++++++++++  DB ERROR +++++++++++++++++++++++ ", error);
   }
 };

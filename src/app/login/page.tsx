@@ -35,15 +35,18 @@ const LoginPage = () => {
 
         const resJson = await response.json();
 
-        if (!resJson.success) {
+        if (!resJson.success) {      
+          setDisableSubmitBtn(false);
           toast.error(resJson?.msg);
         } else {
           router.push("/");
         }
       } else {
+        setDisableSubmitBtn(false);
         toast.error("Please enter all the details");
       }
     } catch (error: any) {
+      setDisableSubmitBtn(false);
       toast.error(error);
     }
   };
