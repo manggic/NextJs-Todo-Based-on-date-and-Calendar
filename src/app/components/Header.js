@@ -9,7 +9,7 @@ const Header = ({ currentUser = {}, currentDate = {}, selectedMonth, openCurrent
         <span className="pl-2"> {currentUser.name}</span>
       </div>
       <div>
-        <h1 className="text-xl">{  selectedMonth? selectedMonth?.[0]?.toUpperCase()+selectedMonth.slice(1) : 'January'}  <span className="bg-black px-2 py-1 rounded">₹ {monthExpense.toLocaleString('en-IN').split('.')[0]}</span></h1>
+        <h1 className="text-xl">{  selectedMonth? selectedMonth?.[0]?.toUpperCase()+selectedMonth.slice(1) : ''}  <span className="bg-black px-2 py-1 rounded">₹ {monthExpense.toLocaleString('en-IN').split('.')[0]}</span></h1>
       </div>
 
       <div className="flex text-rose-200 pr-4 cursor-pointer" onClick={openCurrentDate}>

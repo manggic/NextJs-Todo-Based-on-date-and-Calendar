@@ -152,10 +152,6 @@ export default function Home() {
     return () => {};
   }, [selectedMonth]);
 
-  useEffect(() => {
-    console.log({ currentUser });
-    console.log({ lhsTodo });
-  }, [currentUser, lhsTodo]);
 
   function addTodoInSelectedDate() {
     setShowModal(true);
@@ -446,7 +442,7 @@ export default function Home() {
 
   return (
     <div className="bg-[#2f363b] min-h-screen relative">
-      {currentUser?.name ? (
+      {currentDate?.month ? (
         <>
           <Toaster />
 
@@ -518,11 +514,11 @@ export default function Home() {
             </div>
           </div>
         </>
-      ) : (
-        <div className="flex justify-center items-center min-h-screen text-lg">
+        ) : (
+          <div className="flex justify-center items-center min-h-screen text-lg">
           Loading...
         </div>
-      )}
+       )}
     </div>
   );
 }
